@@ -27,25 +27,57 @@ export default function Navbar() {
           href="/"
           className="text-2xl font-bold tracking-tight text-primary"
         >
-          Goodwill<span className="text-foreground">.</span>
+          Goodwill<span className="text-foreground"></span>
         </Link>
 
         <div className="hidden md:flex items-center space-x-8">
-          <Link
-            href="/#collections"
-            className="text-sm font-medium hover:text-primary transition-colors"
-          >
-            Collections
-          </Link>
+          <div className="relative group">
+            <button className="text-sm font-medium text-foreground hover:text-primary transition-colors flex items-center gap-1">
+              Collections
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+            <div className="absolute top-full -left-4 w-48 bg-background backdrop-blur-md border border-primary/10 rounded-2xl shadow-xl py-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+              <Link
+                href="/collections/living-room"
+                className="block px-6 py-2 text-sm text-secondary font-bold hover:text-primary hover:bg-accent/5 transition-colors"
+              >
+                Living Room
+              </Link>
+              <Link
+                href="/collections/bedroom"
+                className="block px-6 py-2 text-sm text-secondary font-bold hover:text-primary hover:bg-accent/5 transition-colors"
+              >
+                Bedroom
+              </Link>
+              <Link
+                href="/collections/dining-room"
+                className="block px-6 py-2 text-sm text-secondary font-bold hover:text-primary hover:bg-accent/5 transition-colors"
+              >
+                Dining Room
+              </Link>
+            </div>
+          </div>
           <Link
             href="/about"
-            className="text-sm font-medium hover:text-primary transition-colors"
+            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
           >
             About Us
           </Link>
           <Link
             href="/#showroom"
-            className="text-sm font-medium hover:text-primary transition-colors"
+            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
           >
             Showroom
           </Link>

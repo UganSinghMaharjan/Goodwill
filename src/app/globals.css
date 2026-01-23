@@ -1,21 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fdfaf5; /* Creamy Milk background */
-  --foreground: #1a1c22; /* Deep Charcoal for legibility */
-  --primary: #4f46e5; /* Indigo */
-  --primary-hover: #4338ca;
-  --secondary: #6b7280;
-  --accent: #e0e7ff; /* Soft Indigo wash */
+  --background: #fcf9f5; /* Warm Creamy background */
+  --foreground: #2a1e17; /* Deep Espresso Brown for maximum legibility */
+  --primary: #9f4d2c; /* Terracotta Primary */
+  --primary-hover: #863d22;
+  --secondary: #5f5248; /* Dark Muted Earth Brown */
+  --accent: #f5ebe0; /* Soft Peach Wash */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-secondary: var(--secondary);
-  --color-accent: var(--accent);
+@theme {
+  --color-background: #fcf9f5;
+  --color-foreground: #2a1e17;
+  --color-primary: #9f4d2c;
+  --color-primary-hover: #863d22;
+  --color-secondary: #5f5248;
+  --color-accent: #f5ebe0;
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -23,7 +24,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0f1115; /* Sleek Deep Dark */
-    --foreground: #f3f4f6;
+    --foreground: #4f4f4f;
     --primary: #6366f1;
     --accent: #1e1b4b;
   }

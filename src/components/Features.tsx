@@ -7,19 +7,19 @@ export default function Categories() {
       title: "Living Room",
       description: "Sophisticated comfort for your shared spaces.",
       image: "/images/cat-living.png",
-      href: "#living-room",
+      href: "/collections/living-room",
     },
     {
       title: "Bedroom",
       description: "Serene designs for your personal sanctuary.",
       image: "/images/cat-bedroom.png",
-      href: "#bedroom",
+      href: "/collections/bedroom",
     },
     {
       title: "Dining Room",
       description: "Elegant settings for memorable gatherings.",
       image: "/images/cat-dining.png",
-      href: "#dining-room",
+      href: "/collections/dining-room",
     },
   ];
 
@@ -31,7 +31,7 @@ export default function Categories() {
             <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
               Shop by Collection
             </h2>
-            <p className="text-secondary text-lg">
+            <p className="text-foreground text-lg font-medium">
               Explore our curated pieces, each designed with a unique
               personality to fit your home perfectly.
             </p>
@@ -61,7 +61,7 @@ export default function Categories() {
                 <h3 className="text-2xl font-bold text-white mb-2">
                   {cat.title}
                 </h3>
-                <p className="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                <p className="text-gray-100 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
                   {cat.description}
                 </p>
                 <span className="mt-4 inline-flex items-center text-white font-bold text-sm">

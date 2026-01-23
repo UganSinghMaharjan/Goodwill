@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Categories from "@/components/Features"; // Renamed internally but file is Features.tsx
+import Categories from "@/components/Features";
+import FeaturedProducts from "@/components/FeaturedProducts";
 import ProductHighlight from "@/components/ProductHighlight";
 import Footer from "@/components/Footer";
 
@@ -10,6 +11,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Categories />
+      <FeaturedProducts />
       <ProductHighlight />
       <Footer />
     </main>

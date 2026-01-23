@@ -12,7 +12,7 @@ export default function Footer() {
             >
               Goodwill<span className="text-foreground">.</span>
             </Link>
-            <p className="mt-4 text-secondary text-sm max-w-xs">
+            <p className="mt-4 text-foreground font-bold text-sm max-w-xs">
               Building the future of digital impact with modern engineering and
               design.
             </p>
@@ -107,7 +107,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-accent/10 flex flex-col md:flex-row justify-between items-center text-xs text-secondary italic">
+        <div className="mt-12 pt-8 border-t border-accent/10 flex flex-col md:flex-row justify-between items-center text-xs text-foreground font-bold italic">
           <p>© {new Date().getFullYear()} Goodwill Inc. All rights reserved.</p>
           <div className="mt-4 md:mt-0 flex space-x-6">
             <span>Designed for Excellence</span>

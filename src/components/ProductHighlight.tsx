@@ -27,8 +27,10 @@ export default function ProductHighlight() {
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-bold">Premium Materials</p>
-                <p className="text-xs text-secondary italic">
+                <p className="text-sm font-extrabold text-foreground">
+                  Premium Materials
+                </p>
+                <p className="text-xs text-foreground font-bold italic opacity-90">
                   Ethically sourced solid oak & Italian velvet.
                 </p>
               </div>
@@ -39,11 +41,11 @@ export default function ProductHighlight() {
             <h3 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4 text-center lg:text-left">
               The Art of Living
             </h3>
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight text-center lg:text-left">
+            <h2 className="text-primary text-4xl md:text-5xl font-bold mb-8 leading-tight text-center lg:text-left">
               Crafted with Integrity, Designed for Comfort.
             </h2>
             <div className="space-y-6">
-              <p className="text-lg text-secondary leading-relaxed text-center lg:text-left">
+              <p className="text-lg text-foreground font-bold leading-relaxed text-center lg:text-left">
                 Every piece at Goodwill tells a story of meticulous
                 craftsmanship. We believe that furniture isn't just about
                 utility—it's about creating an atmosphere that inspires.
@@ -56,7 +58,7 @@ export default function ProductHighlight() {
                 ].map((item, i) => (
                   <li
                     key={i}
-                    className="flex items-center space-x-3 text-secondary italic"
+                    className="flex items-center space-x-3 text-foreground font-extrabold italic"
                   >
                     <svg
                       className="w-5 h-5 text-primary flex-shrink-0"
@@ -76,7 +78,7 @@ export default function ProductHighlight() {
                 ))}
               </ul>
               <div className="pt-8 flex justify-center lg:justify-start">
-                <button className="px-8 py-4 font-bold text-primary border-2 border-primary rounded-xl hover:bg-primary hover:text-white transition-all">
+                <button className="px-8 py-4 font-bold text-primary border-2 border-primary rounded-xl hover:bg-primary hover:text-white transition-all shadow-lg shadow-primary/5">
                   Our Story
                 </button>
               </div>

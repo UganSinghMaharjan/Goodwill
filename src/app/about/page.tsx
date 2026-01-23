@@ -61,7 +61,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-24">
               <div className="p-8 bg-accent/20 rounded-3xl">
                 <h4 className="font-bold text-lg mb-4">Location</h4>
-                <p className="text-secondary text-sm leading-relaxed">
+                <p className="text-secondary text-sm font-semibold leading-relaxed">
                   M8P8+GWH, Lalitpur 44600
                 </p>
               </div>
@@ -88,7 +88,12 @@ export default function AboutPage() {
               </div>
               <div className="p-8 bg-accent/20 rounded-3xl">
                 <h4 className="font-bold text-lg mb-4">Contact Info</h4>
-                <p className="text-secondary text-sm font-mono">01-5523697</p>
+                <p className="text-secondary text-sm font-semibold">
+                  01-5523697
+                </p>
+                <p className="text-secondary text-sm font-semibold">
+                  +977-9851026442
+                </p>
               </div>
             </div>
 
