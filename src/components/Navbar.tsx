@@ -84,11 +84,14 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <button className="px-5 py-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors">
-            Sign In
-          </button>
           <Link
-            href="/#collections"
+            href="/auth/signup"
+            className="px-5 py-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors"
+          >
+            Sign In
+          </Link>
+          <Link
+            href="/auth/login"
             className="px-5 py-2 text-sm font-semibold text-white bg-primary rounded-full hover:bg-primary-hover transition-shadow hover:shadow-lg"
           >
             Get Started
