@@ -4,13 +4,18 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Image from "next/image";
 import { apiFetch } from "@/app/lib/api";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,14 +29,16 @@ export default function LoginPage() {
     try {
       if (!formData.email || !formData.password) {
         toast.error("Please fill in all fields");
+        setLoading(false);
         return;
       }
 
-      await apiFetch("/auth/login", {
+      const userData = await apiFetch<any>("/auth/login", {
         method: "POST",
         body: JSON.stringify(formData),
       });
 
+      login(userData);
       toast.success("Successfully logged in!");
       router.push("/");
     } catch (err: any) {

@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { User, LogOut, Settings } from "lucide-react";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,7 +32,6 @@ export default function Navbar() {
         >
           Goodwill<span className="text-foreground"></span>
         </Link>
-
         <div className="hidden md:flex items-center space-x-8">
           <div className="relative group">
             <button className="text-sm font-medium text-foreground hover:text-primary transition-colors flex items-center gap-1">
@@ -82,20 +84,56 @@ export default function Navbar() {
             Showroom
           </Link>
         </div>
-
         <div className="flex items-center space-x-4">
-          <Link
-            href="/auth/signup"
-            className="px-5 py-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/auth/login"
-            className="px-5 py-2 text-sm font-semibold text-white bg-primary rounded-full hover:bg-primary-hover transition-shadow hover:shadow-lg"
-          >
-            Get Started
-          </Link>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-4">
+              <span
+                className={`text-sm font-semibold hidden sm:block transition-colors duration-300 ${
+                  scrolled ? "text-foreground" : "text-accent"
+                }`}
+              >
+                Hello, {user?.name}
+              </span>
+              <div className="relative group">
+                <button className="p-2 rounded-full hover:bg-accent/10 transition-colors">
+                  <User className="w-5 h-5 text-primary" />
+                </button>
+                <div className="absolute top-full right-0 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                  {user?.role === "admin" && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary"
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Admin Panel
+                    </Link>
+                  )}
+                  <button
+                    onClick={logout}
+                    className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <Link
+                href="/auth/signup"
+                className="px-5 py-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors"
+              >
+                Sign Up
+              </Link>
+              <Link
+                href="/auth/login"
+                className="px-5 py-2 text-sm font-semibold text-white bg-primary rounded-full hover:bg-primary-hover transition-shadow hover:shadow-lg"
+              >
+                Sign In
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>
