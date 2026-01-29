@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { apiFetch } from "@/app/lib/api";
 
 interface Product {
   id: number;
@@ -20,9 +21,8 @@ export default function FeaturedProducts() {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        // For now, just fetch all products and take first 3 as featured
-        const response = await fetch(`http://127.0.0.1:8001/products/bedroom`); // Defaulting to one category for demo
-        const data = await response.json();
+        // Fetch products from 'bedroom' category as an example
+        const data = await apiFetch<Product[]>("/products/bedroom");
         setProducts(data.slice(0, 3));
       } catch (error) {
         console.error("Error fetching featured products:", error);

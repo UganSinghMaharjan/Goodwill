@@ -2,19 +2,46 @@
 
 import Link from "next/link";
 import { useState } from "react";
+
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { apiFetch } from "@/app/lib/api";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt with:", formData);
-    // Add logic for login here
+    setLoading(true);
+
+    try {
+      if (!formData.email || !formData.password) {
+        toast.error("Please fill in all fields");
+        return;
+      }
+
+      await apiFetch("/auth/login", {
+        method: "POST",
+        body: JSON.stringify(formData),
+      });
+
+      toast.success("Successfully logged in!");
+      router.push("/");
+    } catch (err: any) {
+      console.error("Login failed:", err);
+      const message =
+        err.message?.replace(/^API \d+: /, "") || "Invalid email or password";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -84,16 +111,17 @@ export default function LoginPage() {
             <div className="pt-4">
               <button
                 type="submit"
-                className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/20 active:scale-[0.98]"
+                disabled={loading}
+                className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/20 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Log In
+                {loading ? "Logging In..." : "Log In"}
               </button>
             </div>
           </form>
 
           <div className="mt-10 text-center">
             <p className="text-sm text-secondary font-semibold">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
                 href="/auth/signup"
                 className="text-primary hover:underline font-bold"

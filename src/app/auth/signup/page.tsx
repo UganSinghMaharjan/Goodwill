@@ -2,20 +2,48 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import toast from "react-hot-toast";
+import { apiFetch } from "@/app/lib/api";
 
 export default function SignUpPage() {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Sign up attempt with:", formData);
-    // Add logic for sign up here
+    setLoading(true);
+
+    try {
+      if (!formData.name || !formData.email || !formData.password) {
+        toast.error("Please fill in all fields");
+        return;
+      }
+
+      await apiFetch("/users/", {
+        method: "POST",
+        body: JSON.stringify(formData),
+      });
+
+      toast.success("Account created successfully!");
+      router.push("/auth/login");
+    } catch (err: any) {
+      console.error("Signup failed:", err);
+      const message = err.message?.replace(/^API \d+: /, "") || "Signup failed";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,24 +57,19 @@ export default function SignUpPage() {
               Create Account
             </h1>
             <p className="text-secondary font-semibold italic">
-              Join Goodwill's community of connoisseurs.
+              Join Goodwill&apos;s community of connoisseurs.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label
-                className="block text-sm font-bold text-foreground mb-2"
-                htmlFor="name"
-              >
+              <label className="block text-sm font-bold text-foreground mb-2">
                 Full Name
               </label>
               <input
                 type="text"
-                id="name"
-                className="w-full px-5 py-3 rounded-xl border border-primary/20 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
+                className="w-full px-5 py-3 rounded-xl border border-primary/20 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
                 placeholder="Ex: Leonard Goodwill"
-                required
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
@@ -55,18 +78,13 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label
-                className="block text-sm font-bold text-foreground mb-2"
-                htmlFor="email"
-              >
+              <label className="block text-sm font-bold text-foreground mb-2">
                 Email Address
               </label>
               <input
                 type="email"
-                id="email"
-                className="w-full px-5 py-3 rounded-xl border border-primary/20 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
+                className="w-full px-5 py-3 rounded-xl border border-primary/20 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
                 placeholder="your@email.com"
-                required
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
@@ -75,18 +93,13 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label
-                className="block text-sm font-bold text-foreground mb-2"
-                htmlFor="password"
-              >
+              <label className="block text-sm font-bold text-foreground mb-2">
                 Password
               </label>
               <input
                 type="password"
-                id="password"
-                className="w-full px-5 py-3 rounded-xl border border-primary/20 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
+                className="w-full px-5 py-3 rounded-xl border border-primary/20 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
                 placeholder="••••••••"
-                required
                 value={formData.password}
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
@@ -94,14 +107,13 @@ export default function SignUpPage() {
               />
             </div>
 
-            <div className="pt-4">
-              <button
-                type="submit"
-                className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/20 active:scale-[0.98]"
-              >
-                Sign Up
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-lg shadow-primary/20 disabled:opacity-70"
+            >
+              {loading ? "Creating Account..." : "Sign Up"}
+            </button>
           </form>
 
           <div className="mt-10 text-center">
