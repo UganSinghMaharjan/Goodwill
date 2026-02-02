@@ -25,7 +25,7 @@ export default function AboutPage() {
       <section className="pt-32 pb-24 bg-background">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-extrabold mb-12 tracking-tight">
+            <h1 className="text-5xl md:text-6xl font-extrabold mb-12 text-foreground tracking-tight">
               Our Story <span className="text-primary">&</span> Heritage
             </h1>
 
@@ -40,7 +40,7 @@ export default function AboutPage() {
                   <h3 className="text-sm font-bold uppercase tracking-widest text-primary">
                     Founders
                   </h3>
-                  <div className="flex flex-col space-y-2">
+                  <div className="flex flex-col space-y-2 text-foreground">
                     <span className="text-2xl font-bold">
                       Madan Kaji Maharjan
                     </span>
@@ -60,13 +60,17 @@ export default function AboutPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-24">
               <div className="p-8 bg-accent/20 rounded-3xl">
-                <h4 className="font-bold text-lg mb-4">Location</h4>
-                <p className="text-secondary text-sm font-semibold leading-relaxed">
+                <h4 className="font-bold text-lg text-foreground mb-4">
+                  Location
+                </h4>
+                <p className="text-foreground text-sm font-semibold leading-relaxed">
                   M8P8+GWH, Lalitpur 44600
                 </p>
               </div>
               <div className="p-8 bg-accent/20 rounded-3xl border-2 border-primary/20">
-                <h4 className="font-bold text-lg mb-4">Service Options</h4>
+                <h4 className="font-bold text-lg text-foreground mb-4">
+                  Service Options
+                </h4>
                 <div className="flex items-center space-x-2 text-primary">
                   <svg
                     className="w-5 h-5"
@@ -87,7 +91,9 @@ export default function AboutPage() {
                 </div>
               </div>
               <div className="p-8 bg-accent/20 rounded-3xl">
-                <h4 className="font-bold text-lg mb-4">Contact Info</h4>
+                <h4 className="font-bold text-lg text-foreground mb-4">
+                  Contact Info
+                </h4>
                 <p className="text-secondary text-sm font-semibold">
                   01-5523697
                 </p>
@@ -100,7 +106,7 @@ export default function AboutPage() {
             <div className="bg-white/50 backdrop-blur-sm border border-accent rounded-[2rem] p-8 md:p-12">
               <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
                 <div>
-                  <h2 className="text-3xl font-bold mb-2 tracking-tight">
+                  <h2 className="text-3xl font-bold mb-2 text-foreground tracking-tight">
                     Showroom Hours
                   </h2>
                   <p className="text-secondary text-sm">
@@ -112,20 +118,22 @@ export default function AboutPage() {
                 </span>
               </div>
 
-              <div className="overflow-hidden border border-accent/30 rounded-2xl">
+              <div className="overflow-hidden border border-accent/20 rounded-2xl">
                 <table className="w-full text-left">
-                  <thead className="bg-accent/30 text-xs font-bold uppercase tracking-wider">
+                  <thead className="bg-primary/50 text-foreground text-xs font-bold uppercase tracking-wider">
                     <tr>
                       <th className="px-6 py-4">Day</th>
                       <th className="px-6 py-4">Hours</th>
                       <th className="px-6 py-4">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-accent/20 text-sm">
+                  <tbody className="divide-y divide-foreground/20 text-sm">
                     {suggestedHours.map((row, i) => (
                       <tr key={i} className={row.note ? "bg-primary/5" : ""}>
-                        <td className="px-6 py-4 font-bold">{row.day}</td>
-                        <td className="px-6 py-4 text-secondary">
+                        <td className="px-6 py-4 font-bold text-foreground">
+                          {row.day}
+                        </td>
+                        <td className="px-6 py-4 text-foreground">
                           {row.hours}
                         </td>
                         <td className="px-6 py-4">

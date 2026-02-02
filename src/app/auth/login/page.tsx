@@ -95,12 +95,6 @@ export default function LoginPage() {
                 >
                   Password
                 </label>
-                <Link
-                  href="#"
-                  className="text-xs text-primary hover:underline font-bold"
-                >
-                  Forgot Password?
-                </Link>
               </div>
               <input
                 type="password"
@@ -113,6 +107,14 @@ export default function LoginPage() {
                   setFormData({ ...formData, password: e.target.value })
                 }
               />
+              <div className="flex justify-center mt-2">
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-sm font-bold text-primary hover:underline hover:text-primary-hover transition-colors"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
 
             <div className="pt-4">
