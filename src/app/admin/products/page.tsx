@@ -2,6 +2,22 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/app/lib/api";
+import {
+  Plus,
+  Trash2,
+  Star,
+  RefreshCcw,
+  Upload,
+  Package,
+  Image as ImageIcon,
+  DollarSign,
+  Type,
+  AlignLeft,
+  Search,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
+import Image from "next/image";
 
 interface Product {
   id: number;
@@ -17,6 +33,7 @@ export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
   // Form State
@@ -68,13 +85,13 @@ export default function AdminProductsPage() {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const formData = new FormData();
-      formData.append("file", file);
+      const uploadData = new FormData();
+      uploadData.append("file", file);
 
       try {
         const res = await fetch("http://127.0.0.1:8001/upload", {
           method: "POST",
-          body: formData,
+          body: uploadData,
         });
 
         if (res.ok) {
@@ -101,7 +118,7 @@ export default function AdminProductsPage() {
         }),
       });
 
-      alert("Product added successfully!");
+      // Simple success toast or alert
       fetchProducts(); // Refresh list
       setFormData({
         name: "",
@@ -111,7 +128,6 @@ export default function AdminProductsPage() {
         image_url: "/images/cat-living.png",
         is_featured: false,
       });
-      // Reset file input if possible (simple way: controlled input or ref, but let's just leave it for now)
     } catch (error: any) {
       console.error("Error adding product", error);
       alert(`Failed to add product: ${error.message}`);
@@ -130,164 +146,301 @@ export default function AdminProductsPage() {
     }
   };
 
-  // if (loading) return <div className="p-8 text-center">Loading products...</div>;
-  // if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+  const filteredProducts = products.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.category.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Manage Products</h1>
-        <button
-          onClick={fetchProducts}
-          className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded transition-colors"
-          disabled={loading}
-        >
-          {loading ? "Refreshing..." : "Refresh List"}
-        </button>
-      </div>
-
-      {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded mb-6 border border-red-100">
-          {error}
+    <div className="max-w-7xl mx-auto space-y-10 pb-20">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-4xl font-bold text-[#1a120e] tracking-tight">
+            Inventory Manage
+          </h1>
+          <p className="text-[#4a403a] font-medium opacity-70 mt-1">
+            Curate and expand your architectural furniture collection.
+          </p>
         </div>
-      )}
-
-      {/* Add Product Form */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-xl font-semibold mb-4">Add New Product</h2>
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
-        >
-          <input
-            type="text"
-            name="name"
-            placeholder="Product Name"
-            value={formData.name}
-            onChange={handleChange}
-            className="border p-2 rounded"
-            required
-          />
-          <select
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            className="border p-2 rounded"
-            required
-          >
-            <option value="">Select Category</option>
-            <option value="living-room">Living Room</option>
-            <option value="bedroom">Bedroom</option>
-            <option value="dining-room">Dining Room</option>
-            <option value="office">Office</option>
-          </select>
-          <input
-            type="number"
-            name="price"
-            placeholder="Price"
-            value={formData.price}
-            onChange={handleChange}
-            className="border p-2 rounded"
-            required
-          />
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold text-gray-700">
-              Product Image
-            </label>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4a403a]/40" />
             <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="border p-2 rounded bg-gray-50"
+              type="text"
+              placeholder="Search assets..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-4 py-2.5 bg-white border border-[#9f4d2c]/10 rounded-xl text-sm focus:outline-none focus:border-[#9f4d2c] transition-all w-64 shadow-sm"
             />
-            {formData.image_url && (
-              <div className="text-xs text-green-600 truncate">
-                Uploaded: {formData.image_url}
-              </div>
-            )}
-            <input type="hidden" name="image_url" value={formData.image_url} />
-          </div>
-          <textarea
-            name="description"
-            placeholder="Description"
-            value={formData.description}
-            onChange={handleChange}
-            className="border p-2 rounded md:col-span-2"
-          />
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="is_featured"
-              checked={formData.is_featured}
-              onChange={handleChange}
-              id="is_featured"
-            />
-            <label htmlFor="is_featured">Featured Masterpiece</label>
           </div>
           <button
-            type="submit"
-            className="bg-blue-600 text-white p-2 rounded md:col-span-2 hover:bg-blue-700"
+            onClick={fetchProducts}
+            className={`p-2.5 bg-white border border-[#9f4d2c]/10 rounded-xl text-[#9f4d2c] hover:bg-[#9f4d2c]/5 transition-all shadow-sm ${loading ? "animate-spin" : ""}`}
+            disabled={loading}
           >
-            Add Product
+            <RefreshCcw className="w-5 h-5" />
           </button>
-        </form>
+        </div>
       </div>
 
-      {/* Product List */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Existing Products</h2>
-        {loading ? (
-          <div className="text-center py-8 text-gray-500 animate-pulse">
-            Loading products...
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+        {/* Add Product Form - Modern Sidebar Style */}
+        <div className="lg:col-span-1">
+          <div className="bg-white rounded-[2rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-[#9f4d2c]/5 sticky top-28">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="p-2.5 bg-[#9f4d2c]/10 rounded-xl text-[#9f4d2c]">
+                <Plus className="w-5 h-5" />
+              </div>
+              <h2 className="text-xl font-bold text-[#1a120e]">New Entry</h2>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-[#4a403a]/60 uppercase tracking-widest flex items-center gap-2 px-1">
+                  <Type className="w-3 h-3" /> Asset Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="e.g. Minimalist Oak Table"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-[#fcf9f5] border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-[#4a403a]/60 uppercase tracking-widest flex items-center gap-2 px-1">
+                  <Package className="w-3 h-3" /> Category
+                </label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-[#fcf9f5] border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all appearance-none"
+                  required
+                >
+                  <option value="">Select Category</option>
+                  <option value="living-room">Living Room</option>
+                  <option value="bedroom">Bedroom</option>
+                  <option value="dining-room">Dining Room</option>
+                  <option value="office">Office</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-[#4a403a]/60 uppercase tracking-widest flex items-center gap-2 px-1">
+                  <DollarSign className="w-3 h-3" /> Valuation
+                </label>
+                <input
+                  type="number"
+                  name="price"
+                  placeholder="0.00"
+                  value={formData.price}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-[#fcf9f5] border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-[#4a403a]/60 uppercase tracking-widest flex items-center gap-2 px-1">
+                  <ImageIcon className="w-3 h-3" /> Visual Asset
+                </label>
+                <div className="relative group cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  <div className="w-full px-4 py-6 bg-[#fcf9f5] border-2 border-dashed border-[#9f4d2c]/10 rounded-2xl flex flex-col items-center justify-center gap-2 group-hover:bg-[#9f4d2c]/5 transition-all">
+                    <Upload className="w-6 h-6 text-[#9f4d2c] opacity-40 group-hover:opacity-100 transition-all" />
+                    <span className="text-[10px] font-bold text-[#4a403a]/40 uppercase tracking-tight">
+                      Click to upload
+                    </span>
+                  </div>
+                </div>
+                {formData.image_url && (
+                  <div className="mt-2 text-[10px] font-bold text-green-600/70 truncate flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" /> Linked:{" "}
+                    {formData.image_url.split("/").pop()}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-[#4a403a]/60 uppercase tracking-widest flex items-center gap-2 px-1">
+                  <AlignLeft className="w-3 h-3" /> Narrative
+                </label>
+                <textarea
+                  name="description"
+                  placeholder="Describe the masterpiece..."
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-4 py-3 bg-[#fcf9f5] border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all resize-none"
+                />
+              </div>
+
+              <div className="flex items-center gap-3 py-2">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="is_featured"
+                    checked={formData.is_featured}
+                    onChange={handleChange}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-[#4a403a]/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#9f4d2c]"></div>
+                </label>
+                <span className="text-xs font-bold text-[#1a120e]">
+                  Highlight as Featured
+                </span>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-4 bg-[#9f4d2c] text-white rounded-2xl font-bold shadow-lg shadow-[#9f4d2c]/20 hover:bg-[#863d22] transition-all duration-300 translate-y-0 active:translate-y-1"
+              >
+                Create Asset
+              </button>
+            </form>
           </div>
-        ) : products.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <p>No products found.</p>
-            <p className="text-sm mt-2">
-              Make sure the backend is running on port 8001.
-            </p>
-          </div>
-        ) : (
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b">
-                <th className="p-2">ID</th>
-                <th className="p-2">Name</th>
-                <th className="p-2">Category</th>
-                <th className="p-2">Price</th>
-                <th className="p-2">Featured</th>
-                <th className="p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product.id} className="border-b hover:bg-gray-50">
-                  <td className="p-2">{product.id}</td>
-                  <td className="p-2">{product.name}</td>
-                  <td className="p-2 capitalize">{product.category}</td>
-                  <td className="p-2">${product.price}</td>
-                  <td className="p-2">
-                    {product.is_featured ? (
-                      <span className="text-green-600 font-bold">Yes</span>
-                    ) : (
-                      <span className="text-gray-400">No</span>
-                    )}
-                  </td>
-                  <td className="p-2">
-                    <button
-                      onClick={() => toggleFeatured(product)}
-                      className={`px-3 py-1 rounded text-sm ${product.is_featured ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}
+        </div>
+
+        {/* Product List - Modern Table Style */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-[#9f4d2c]/5">
+            <div className="px-8 py-6 border-b border-[#9f4d2c]/5 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-[#1a120e]">
+                Asset Registry
+              </h2>
+              <div className="text-xs font-bold text-[#4a403a]/40 bg-[#fcf9f5] px-3 py-1 rounded-full border border-[#9f4d2c]/5">
+                {filteredProducts.length} Total Items
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-[#fcf9f5]/50 no-border">
+                    <th className="px-8 py-4 text-[10px] font-bold text-[#4a403a]/50 uppercase tracking-[0.15em]">
+                      Object
+                    </th>
+                    <th className="px-4 py-4 text-[10px] font-bold text-[#4a403a]/50 uppercase tracking-[0.15em]">
+                      Category
+                    </th>
+                    <th className="px-4 py-4 text-[10px] font-bold text-[#4a403a]/50 uppercase tracking-[0.15em]">
+                      Valuation
+                    </th>
+                    <th className="px-4 py-4 text-[10px] font-bold text-[#4a403a]/50 uppercase tracking-[0.15em]">
+                      Status
+                    </th>
+                    <th className="px-8 py-4 text-[10px] font-bold text-[#4a403a]/50 uppercase tracking-[0.15em] text-right">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#9f4d2c]/5">
+                  {filteredProducts.map((product) => (
+                    <tr
+                      key={product.id}
+                      className="hover:bg-[#fcf9f5]/80 transition-all duration-300 group"
                     >
-                      {product.is_featured
-                        ? "Remove Featured"
-                        : "Make Featured"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+                      <td className="px-8 py-5">
+                        <div className="flex items-center gap-4">
+                          <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-[#f5ebe0] shadow-sm border border-[#9f4d2c]/10">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={product.image_url}
+                              alt={product.name}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                              onError={(e) => {
+                                console.error(
+                                  `<img> tag failed to load:`,
+                                  product.image_url,
+                                );
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <div className="font-bold text-[#1a120e] text-sm leading-tight">
+                              {product.name}
+                            </div>
+                            <div className="text-[10px] font-medium text-[#4a403a]/40 mt-0.5 tracking-tight capitalize">
+                              {product.category}
+                            </div>
+                            <div className="text-[8px] text-gray-400 break-all max-w-[150px] mt-1">
+                              URL: {product.image_url}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-5">
+                        <span className="px-2.5 py-1 text-[10px] font-bold bg-[#f5ebe0] text-[#4a403a] rounded-lg tracking-wide uppercase border border-[#9f4d2c]/5">
+                          {product.category}
+                        </span>
+                      </td>
+                      <td className="px-4 py-5">
+                        <div className="font-bold text-[#9f4d2c] text-sm tracking-tight">
+                          ${product.price.toLocaleString()}
+                        </div>
+                      </td>
+                      <td className="px-4 py-5">
+                        {product.is_featured ? (
+                          <div className="flex items-center gap-1.5 text-green-600">
+                            <Star className="w-3.5 h-3.5 fill-current" />
+                            <span className="text-[10px] font-bold uppercase tracking-wider">
+                              Featured
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5 text-[#4a403a]/20">
+                            <XCircle className="w-3.5 h-3.5" />
+                            <span className="text-[10px] font-bold uppercase tracking-wider">
+                              Regular
+                            </span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-8 py-5 text-right">
+                        <div className="flex items-center justify-end gap-2 pr-0 opacity-0 group-hover:opacity-100 transition-opacity translate-x-1 group-hover:translate-x-0 transition-all duration-300">
+                          <button
+                            onClick={() => toggleFeatured(product)}
+                            className={`p-2 rounded-xl border transition-all ${product.is_featured ? "bg-red-50 border-red-100 text-red-400 hover:bg-red-500 hover:text-white" : "bg-green-50 border-green-100 text-green-400 hover:bg-green-500 hover:text-white"}`}
+                            title={
+                              product.is_featured
+                                ? "Remove Featured"
+                                : "Make Featured"
+                            }
+                          >
+                            <Star
+                              className={`w-4 h-4 ${product.is_featured ? "fill-current" : ""}`}
+                            />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredProducts.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="px-8 py-12 text-center text-[#4a403a]/40 font-medium"
+                      >
+                        No assets found matching your criteria.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
