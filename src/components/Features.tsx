@@ -1,7 +1,13 @@
+"use client";
+
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Categories() {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+
   const categories = [
     {
       title: "Living Room",
@@ -23,6 +29,14 @@ export default function Categories() {
     },
   ];
 
+  const handleExplore = (href: string) => {
+    if (!isAuthenticated) {
+      router.push("/auth/login");
+    } else {
+      router.push(href);
+    }
+  };
+
   return (
     <section id="collections" className="py-24 bg-background">
       <div className="container mx-auto px-6">
@@ -36,20 +50,20 @@ export default function Categories() {
               personality to fit your home perfectly.
             </p>
           </div>
-          <Link
-            href="#"
+          <button
+            onClick={() => handleExplore("/collections/living-room")}
             className="font-bold text-primary border-b-2 border-primary pb-1 hover:text-primary-hover hover:border-primary-hover transition-all"
           >
             View All Collections
-          </Link>
+          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {categories.map((cat, index) => (
-            <Link
+            <div
               key={index}
-              href={cat.href}
-              className="group overflow-hidden rounded-3xl relative aspect-[4/5]"
+              onClick={() => handleExplore(cat.href)}
+              className="group overflow-hidden rounded-3xl relative aspect-[4/5] cursor-pointer"
             >
               <Image
                 src={cat.image}
@@ -81,7 +95,7 @@ export default function Categories() {
                   </svg>
                 </span>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
