@@ -16,6 +16,31 @@ interface Product {
   image_url: string;
 }
 
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+
+function AuthProductButton({ productId }: { productId: number }) {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (!isAuthenticated) {
+      router.push("/auth/login");
+    } else {
+      router.push(`/products/${productId}`);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className="w-full py-4 bg-transparent border-2 border-primary/20 rounded-2xl font-bold text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-500 group-hover:shadow-lg group-hover:shadow-primary/20"
+    >
+      View Masterpiece
+    </button>
+  );
+}
+
 export default function CategoryPage() {
   const { category } = useParams();
   const [products, setProducts] = useState<Product[]>([]);
@@ -101,9 +126,7 @@ export default function CategoryPage() {
                   <p className="text-foreground line-clamp-2 text-sm leading-relaxed mb-6 italic font-bold">
                     {product.description}
                   </p>
-                  <button className="w-full py-4 bg-transparent border-2 border-primary/20 rounded-2xl font-bold text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-500 group-hover:shadow-lg group-hover:shadow-primary/20">
-                    View Masterpiece
-                  </button>
+                  <AuthProductButton productId={product.id} />
                 </div>
               </div>
             ))}
