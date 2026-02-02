@@ -21,7 +21,7 @@ export default function Hero() {
           <span className="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full">
             Limited Edition Collection
           </span>
-          <h1 className="text-4xl md:text-7xl font-extrabold tracking-tight leading-tight mb-8 text-foreground">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight mb-8 text-foreground">
             Elevate Your <span className="text-primary italic">Living</span>{" "}
             Space.
           </h1>
@@ -39,10 +39,11 @@ export default function Hero() {
             </Link>
             <Link
               href="/about"
-              className="w-full sm:w-auto px-10 py-5 text-lg font-extrabold text-center text-foreground border-2 border-foreground rounded-xl hover:bg-accent transition-all"
+              className="w-full sm:w-auto px-10 py-5 text-lg font-bold text-center text-foreground border-2 border-foreground rounded-xl hover:bg-accent transition-all"
             >
               Our Story
             </Link>
+            s
           </div>
         </div>
       </div>

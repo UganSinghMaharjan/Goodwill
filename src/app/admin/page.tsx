@@ -11,6 +11,9 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Clock,
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon,
 } from "lucide-react";
 
 interface Stats {
@@ -18,6 +21,108 @@ interface Stats {
   totalOrders: number;
   totalUsers: number;
   totalRevenue: number;
+}
+
+function ExecutiveCalendar() {
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const daysInMonth = (year: number, month: number) =>
+    new Date(year, month + 1, 0).getDate();
+  const firstDayOfMonth = (year: number, month: number) =>
+    new Date(year, month, 1).getDay();
+
+  const monthName = currentDate.toLocaleString("default", { month: "long" });
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const days = [];
+  const totalDays = daysInMonth(year, month);
+  const startDay = firstDayOfMonth(year, month);
+
+  // Add empty slots for days before the first day of the month
+  for (let i = 0; i < startDay; i++) {
+    days.push(null);
+  }
+
+  // Add actual days
+  for (let i = 1; i <= totalDays; i++) {
+    days.push(i);
+  }
+
+  const prevMonth = () => {
+    setCurrentDate(new Date(year, month - 1, 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentDate(new Date(year, month + 1, 1));
+  };
+
+  const isToday = (day: number | null) => {
+    if (!day) return false;
+    const today = new Date();
+    return (
+      day === today.getDate() &&
+      month === today.getMonth() &&
+      year === today.getFullYear()
+    );
+  };
+
+  return (
+    <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h4 className="text-xs font-bold text-white uppercase tracking-[0.2em]">
+          {monthName} {year}
+        </h4>
+        <div className="flex gap-2">
+          <button
+            onClick={prevMonth}
+            className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/40 hover:text-white"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            onClick={nextMonth}
+            className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/40 hover:text-white"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-7 gap-y-4 text-center">
+        {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
+          <span
+            key={`${d}-${i}`}
+            className="text-[10px] font-bold text-white/20 uppercase"
+          >
+            {d}
+          </span>
+        ))}
+        {days.map((day, i) => (
+          <div
+            key={i}
+            className={`text-xs font-bold py-1.5 relative ${
+              day ? "text-white/80" : ""
+            } ${isToday(day) ? "text-white" : ""}`}
+          >
+            {day}
+            {isToday(day) && (
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#9f4d2c] rounded-full" />
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-8 pt-6 border-t border-white/10">
+        <div className="flex items-center gap-3">
+          <div className="w-1.5 h-1.5 bg-[#9f4d2c] rounded-full animate-pulse" />
+          <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+            Surveillance Day: {new Date().getDate()} {monthName}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function AdminDashboard() {
@@ -222,16 +327,8 @@ export default function AdminDashboard() {
               </div>
             ))}
           </div>
-          <div className="mt-12 p-6 bg-white/5 rounded-2xl border border-white/5 border-dashed">
-            <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] mb-2 text-center">
-              System Health
-            </p>
-            <div className="flex justify-center items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-xs font-bold text-white">
-                All Ports Operational
-              </span>
-            </div>
+          <div className="mt-8">
+            <ExecutiveCalendar />
           </div>
         </div>
       </div>
