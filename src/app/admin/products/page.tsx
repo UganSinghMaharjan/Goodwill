@@ -227,7 +227,7 @@ export default function AdminProductsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
         {/* Add Product Form - Modern Sidebar Style */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-[2rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-[#9f4d2c]/5 sticky top-28">
+          <div className="bg-white rounded-[2rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-[#9f4d2c]/5 lg:sticky lg:top-28">
             <div className="flex items-center gap-3 mb-8">
               <div className="p-2.5 bg-[#9f4d2c]/10 rounded-xl text-[#9f4d2c]">
                 <Plus className="w-5 h-5" />

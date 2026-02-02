@@ -254,7 +254,7 @@ export default function CheckoutPage() {
 
           {/* Summary */}
           <div className="lg:col-span-5 relative">
-            <div className="sticky top-32 bg-white rounded-[2.5rem] p-10 border border-primary/5 shadow-2xl shadow-primary/5">
+            <div className="lg:sticky lg:top-32 bg-white rounded-[2.5rem] p-6 sm:p-10 border border-primary/5 shadow-2xl shadow-primary/5">
               <h2 className="text-foreground text-2xl font-bold mb-8">
                 Acquisition Summary
               </h2>
