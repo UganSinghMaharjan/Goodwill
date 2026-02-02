@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Package,
@@ -14,6 +17,14 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: "/admin", label: "Analytics", icon: BarChart3 },
+    { href: "/admin/products", label: "Inventory Control", icon: Package },
+    { href: "/admin/orders", label: "Order Insights", icon: ShoppingCart },
+  ];
+
   return (
     <div className="flex min-h-screen bg-[#fcf9f5]">
       {/* Sidebar */}
@@ -33,34 +44,33 @@ export default function AdminLayout({
         </div>
 
         <nav className="flex-1 px-4 py-4 flex flex-col gap-2">
-          <Link
-            href="/admin/products"
-            className="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-2xl transition-all duration-300 bg-[#9f4d2c]/5 text-[#9f4d2c] border border-[#9f4d2c]/10"
-          >
-            <Package className="w-5 h-5" />
-            Inventory Control
-          </Link>
-          <Link
-            href="/admin/orders"
-            className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-[#4a403a] hover:bg-[#9f4d2c]/5 hover:text-[#9f4d2c] rounded-2xl transition-all duration-300"
-          >
-            <ShoppingCart className="w-5 h-5" />
-            Order Insights
-          </Link>
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-2xl transition-all duration-300 ${
+                  isActive
+                    ? "bg-[#9f4d2c]/5 text-[#9f4d2c] border border-[#9f4d2c]/10 shadow-sm"
+                    : "text-[#4a403a] hover:bg-[#9f4d2c]/5 hover:text-[#9f4d2c] border border-transparent"
+                }`}
+              >
+                <item.icon className="w-5 h-5" />
+                {item.label}
+              </Link>
+            );
+          })}
 
           <div className="my-6 border-t border-[#9f4d2c]/5 mx-4" />
 
           <Link
-            href="/admin"
-            className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-[#4a403a] hover:bg-[#9f4d2c]/5 hover:text-[#9f4d2c] rounded-2xl transition-all duration-300"
-          >
-            <BarChart3 className="w-5 h-5" />
-            Analytics
-          </Link>
-
-          <Link
-            href="/admin"
-            className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-[#4a403a] hover:bg-[#9f4d2c]/5 hover:text-[#9f4d2c] rounded-2xl transition-all duration-300"
+            href="/admin/settings" // Changed href to /admin/settings
+            className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-2xl transition-all duration-300 ${
+              pathname === "/admin/settings"
+                ? "bg-[#9f4d2c]/5 text-[#9f4d2c] border border-[#9f4d2c]/10 shadow-sm"
+                : "text-[#4a403a] hover:bg-[#9f4d2c]/5 hover:text-[#9f4d2c] border border-transparent"
+            }`}
           >
             <Settings className="w-5 h-5" />
             System Rules

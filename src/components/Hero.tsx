@@ -39,7 +39,7 @@ export default function Hero() {
             </Link>
             <Link
               href="/about"
-              className="w-full sm:w-auto px-10 py-5 text-lg font-bold text-center text-foreground border-2 border-accent rounded-xl hover:bg-accent transition-all"
+              className="w-full sm:w-auto px-10 py-5 text-lg font-extrabold text-center text-foreground border-2 border-foreground rounded-xl hover:bg-accent transition-all"
             >
               Our Story
             </Link>

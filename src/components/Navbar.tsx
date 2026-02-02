@@ -3,11 +3,22 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { User, LogOut, Settings } from "lucide-react";
+import {
+  User,
+  LogOut,
+  Settings,
+  ShoppingCart,
+  Trash2,
+  Plus,
+  Minus,
+} from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
+  const { cart, removeFromCart, updateQuantity, itemsCount, cartTotal } =
+    useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,8 +102,106 @@ export default function Navbar() {
           </Link>
         </div>
         <div className="flex items-center space-x-4">
+          {/* Cart Dropdown */}
+          <div className="relative group mr-2">
+            <button className="p-2 rounded-full hover:bg-accent/10 transition-colors relative">
+              <ShoppingCart
+                className={`w-6 h-6 ${scrolled ? "text-foreground" : "text-primary"}`}
+              />
+              {itemsCount > 0 && (
+                <span className="absolute top-0 right-0 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-background animate-in zoom-in duration-300">
+                  {itemsCount}
+                </span>
+              )}
+            </button>
+
+            <div className="absolute top-full right-0 w-80 bg-background backdrop-blur-xl border border-primary/10 rounded-2xl shadow-2xl py-6 px-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50">
+              <h3 className="text-lg font-bold mb-4 px-2">Your Cart</h3>
+
+              {cart.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <ShoppingCart className="w-6 h-6 text-foreground/20" />
+                  </div>
+                  <p className="text-sm text-foreground/40 font-bold">
+                    Your cart is empty
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+                  {cart.map((item) => (
+                    <div key={item.id} className="flex gap-4 group/item">
+                      <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-accent flex-shrink-0">
+                        {/* standard img for robustness as requested before */}
+                        <img
+                          src={item.image_url}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-bold text-foreground truncate">
+                          {item.name}
+                        </h4>
+                        <p className="text-xs text-primary font-bold mt-0.5">
+                          ${item.price}
+                        </p>
+                        <div className="flex items-center gap-3 mt-2">
+                          <div className="flex items-center bg-accent/10 rounded-lg p-1">
+                            <button
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity - 1)
+                              }
+                              className="p-1 hover:text-primary transition-colors"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="text-[10px] font-bold w-4 text-center">
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity + 1)
+                              }
+                              className="p-1 hover:text-primary transition-colors"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+                          <button
+                            onClick={() => removeFromCart(item.id)}
+                            className="text-[10px] font-bold text-red-400 hover:text-red-500 transition-colors uppercase tracking-widest mt-1"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="pt-4 border-t border-primary/5 mt-4">
+                    <div className="flex justify-between items-center mb-4 px-2">
+                      <span className="text-sm font-bold opacity-40">
+                        Total Amount
+                      </span>
+                      <span className="text-lg font-bold text-primary">
+                        ${cartTotal.toLocaleString()}
+                      </span>
+                    </div>
+                    <Link
+                      href="/checkout"
+                      className="block w-full py-3 bg-primary text-white text-center rounded-xl font-bold shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]"
+                    >
+                      Checkout Now
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
           {isAuthenticated ? (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <span
                 className={`text-sm font-semibold hidden sm:block transition-colors duration-300 ${
                   scrolled ? "text-foreground" : "text-secondary"

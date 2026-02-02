@@ -16,29 +16,48 @@ interface Product {
   image_url: string;
 }
 
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
+import { ShoppingCart, ArrowLeft } from "lucide-react";
+
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/app/lib/api";
 
-function AuthProductButton({ productId }: { productId: number }) {
+function AuthProductButton({ product }: { product: Product }) {
   const { isAuthenticated } = useAuth();
+  const { addToCart } = useCart();
   const router = useRouter();
 
-  const handleClick = () => {
+  const handleView = () => {
     if (!isAuthenticated) {
       router.push("/auth/login");
     } else {
-      router.push(`/products/${productId}`);
+      router.push(`/products/${product.id}`);
     }
   };
 
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart(product);
+    toast.success(`${product.name} added to cart!`);
+  };
+
   return (
-    <button
-      onClick={handleClick}
-      className="w-full py-4 bg-transparent border-2 border-primary/20 rounded-2xl font-bold text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-500 group-hover:shadow-lg group-hover:shadow-primary/20"
-    >
-      View Masterpiece
-    </button>
+    <div className="flex gap-2">
+      <button
+        onClick={handleView}
+        className="flex-[2] py-4 bg-transparent border-2 border-primary/20 rounded-2xl font-bold text-primary hover:bg-white hover:border-white hover:text-primary transition-all duration-500"
+      >
+        View
+      </button>
+      <button
+        onClick={handleAddToCart}
+        className="flex-1 py-4 bg-primary rounded-2xl font-bold text-white hover:bg-primary-hover shadow-lg shadow-primary/10 transition-all duration-500 flex items-center justify-center"
+      >
+        <ShoppingCart className="w-5 h-5" />
+      </button>
+    </div>
   );
 }
 
@@ -82,38 +101,46 @@ export default function CategoryPage() {
     <main className="min-h-screen bg-background">
       <Navbar />
 
-      <div className="pt-32 pb-24 container mx-auto px-6">
-        <div className="mb-12">
+      {/* Hero Section */}
+      <div className="relative pt-40 pb-32 bg-accent/20">
+        <div className="container mx-auto px-6">
           <Link
             href="/"
-            className="text-foreground font-extrabold hover:text-primary transition-colors mb-4 inline-block text-sm"
+            className="group inline-flex items-center gap-2 text-sm font-bold text-foreground/40 hover:text-primary transition-colors mb-16"
           >
-            &larr; Back to Home
+            <ArrowLeft className="w-4 h-4 transform transition-transform group-hover:-translate-x-1" />
+            Back to Home
           </Link>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-            {categoryTitle} Collection
-          </h1>
-          <p className="mt-4 text-xl text-foreground font-bold max-w-2xl opacity-90">
-            A curated selection of {categoryTitle.toLowerCase()} pieces,
-            designed for timeless appeal and modern living.
-          </p>
-        </div>
 
+          <div className="text-center">
+            <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 tracking-tight">
+              {categoryTitle}
+            </h1>
+            <p className="text-lg text-secondary max-w-2xl mx-auto font-medium">
+              Discover a curated selection of architectural furniture for your{" "}
+              {categoryTitle.toLowerCase()}, where heritage craftsmanship meets
+              modern minimalist design.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-6 py-20">
         {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : error ? (
-          <div className="text-center py-20 bg-red-50 dark:bg-red-900/10 rounded-3xl border border-red-100 dark:border-red-900/20">
-            <h3 className="text-2xl font-bold text-red-600 mb-2">
+          <div className="text-center py-20 bg-red-50 rounded-3xl border border-red-100">
+            <h3 className="text-xl font-bold text-red-600 mb-2">
               Connection Error
             </h3>
-            <p className="text-red-500 font-medium">{error}</p>
+            <p className="text-red-500 mb-6">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-6 px-6 py-2 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition-colors"
+              className="px-8 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all"
             >
-              Try Again
+              Retry Connection
             </button>
           </div>
         ) : products.length > 0 ? (
@@ -150,7 +177,7 @@ export default function CategoryPage() {
                   <p className="text-foreground line-clamp-2 text-sm leading-relaxed mb-6 italic font-bold">
                     {product.description}
                   </p>
-                  <AuthProductButton productId={product.id} />
+                  <AuthProductButton product={product} />
                 </div>
               </div>
             ))}

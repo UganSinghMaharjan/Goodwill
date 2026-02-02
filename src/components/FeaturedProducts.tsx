@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { apiFetch } from "@/app/lib/api";
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
+import { ShoppingCart } from "lucide-react";
 
 interface Product {
   id: number;
@@ -17,13 +20,14 @@ interface Product {
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
         const data = await apiFetch<Product[]>("/products"); // Fetch all products
         // Filter for featured ones
-        const featured = data.filter((p: any) => p.is_featured);
+        const featured = data.filter((p: any) => p.is_featured && !p.is_hidden);
         setProducts(featured.slice(0, 3)); // Show top 3 featured
       } catch (error) {
         console.error("Error fetching featured products:", error);
@@ -33,6 +37,11 @@ export default function FeaturedProducts() {
     };
     fetchFeatured();
   }, []);
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    toast.success(`${product.name} added to cart!`);
+  };
 
   if (loading || products.length === 0) return null;
 
@@ -67,9 +76,34 @@ export default function FeaturedProducts() {
                   }}
                 />
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors duration-500" />
-                <div className="absolute bottom-6 left-6 right-6 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                  <button className="w-full py-4 bg-white/90 backdrop-blur-md rounded-xl font-bold text-primary shadow-lg hover:bg-white transition-colors">
-                    Quick View
+                <div className="absolute bottom-6 left-6 right-6 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 flex gap-2">
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="flex-1 py-4 bg-primary text-white rounded-xl font-bold shadow-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                    Add to Cart
+                  </button>
+                  <button className="p-4 bg-white/90 backdrop-blur-md rounded-xl font-bold text-primary shadow-lg hover:bg-white transition-colors">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
                   </button>
                 </div>
               </div>

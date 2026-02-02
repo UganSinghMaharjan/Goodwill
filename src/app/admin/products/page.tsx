@@ -16,7 +16,10 @@ import {
   Search,
   CheckCircle2,
   XCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import Image from "next/image";
 
 interface Product {
@@ -27,6 +30,7 @@ interface Product {
   description: string;
   image_url: string;
   is_featured: boolean;
+  is_hidden: boolean;
 }
 
 export default function AdminProductsPage() {
@@ -44,6 +48,7 @@ export default function AdminProductsPage() {
     description: "",
     image_url: "/images/cat-living.png", // Default for now
     is_featured: false,
+    is_hidden: false,
   });
 
   useEffect(() => {
@@ -58,6 +63,7 @@ export default function AdminProductsPage() {
       setProducts(data);
     } catch (error: any) {
       console.error("Failed to fetch products", error);
+      toast.error(error.message || "Failed to load products");
       setError(
         error.message || "Failed to load products. Check backend connection.",
       );
@@ -119,6 +125,7 @@ export default function AdminProductsPage() {
       });
 
       // Simple success toast or alert
+      toast.success("Masterpiece added to registry!");
       fetchProducts(); // Refresh list
       setFormData({
         name: "",
@@ -127,10 +134,11 @@ export default function AdminProductsPage() {
         description: "",
         image_url: "/images/cat-living.png",
         is_featured: false,
+        is_hidden: false,
       });
     } catch (error: any) {
       console.error("Error adding product", error);
-      alert(`Failed to add product: ${error.message}`);
+      toast.error(`Failed to add product: ${error.message}`);
     }
   };
 
@@ -146,6 +154,37 @@ export default function AdminProductsPage() {
     }
   };
 
+  const toggleVisibility = async (product: Product) => {
+    try {
+      await apiFetch(`/products/${product.id}`, {
+        method: "PUT",
+        body: JSON.stringify({ ...product, is_hidden: !product.is_hidden }),
+      });
+      fetchProducts();
+    } catch (error) {
+      console.error("Error updating visibility", error);
+    }
+  };
+
+  const deleteProduct = async (productId: number) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to permanently remove this asset from the registry?",
+      )
+    )
+      return;
+
+    try {
+      await apiFetch(`/products/${productId}`, {
+        method: "DELETE",
+      });
+      fetchProducts();
+    } catch (error) {
+      console.error("Error removing product", error);
+      alert("Failed to remove product");
+    }
+  };
+
   const filteredProducts = products.filter(
     (p) =>
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -158,7 +197,7 @@ export default function AdminProductsPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-4xl font-bold text-[#1a120e] tracking-tight">
-            Inventory Manage
+            Inventory Control
           </h1>
           <p className="text-[#4a403a] font-medium opacity-70 mt-1">
             Curate and expand your architectural furniture collection.
@@ -302,6 +341,22 @@ export default function AdminProductsPage() {
                 </span>
               </div>
 
+              <div className="flex items-center gap-3 py-2">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="is_hidden"
+                    checked={formData.is_hidden}
+                    onChange={handleChange}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-[#4a403a]/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                </label>
+                <span className="text-xs font-bold text-[#1a120e]">
+                  Hide from Public Grid
+                </span>
+              </div>
+
               <button
                 type="submit"
                 className="w-full py-4 bg-[#9f4d2c] text-white rounded-2xl font-bold shadow-lg shadow-[#9f4d2c]/20 hover:bg-[#863d22] transition-all duration-300 translate-y-0 active:translate-y-1"
@@ -406,12 +461,34 @@ export default function AdminProductsPage() {
                             </span>
                           </div>
                         )}
+                        {product.is_hidden && (
+                          <div className="flex items-center gap-1.5 text-amber-600 mt-1">
+                            <EyeOff className="w-3 h-3" />
+                            <span className="text-[10px] font-bold uppercase tracking-wider">
+                              Hidden
+                            </span>
+                          </div>
+                        )}
                       </td>
                       <td className="px-8 py-5 text-right">
                         <div className="flex items-center justify-end gap-2 pr-0 opacity-0 group-hover:opacity-100 transition-opacity translate-x-1 group-hover:translate-x-0 transition-all duration-300">
                           <button
+                            onClick={() => toggleVisibility(product)}
+                            className={`p-2 rounded-xl border transition-all ${product.is_hidden ? "bg-[#1a120e] text-white" : "bg-blue-50 border-blue-100 text-blue-400 hover:bg-blue-500 hover:text-white"}`}
+                            title={
+                              product.is_hidden ? "Show Asset" : "Hide Asset"
+                            }
+                          >
+                            {product.is_hidden ? (
+                              <Eye className="w-4 h-4" />
+                            ) : (
+                              <EyeOff className="w-4 h-4" />
+                            )}
+                          </button>
+
+                          <button
                             onClick={() => toggleFeatured(product)}
-                            className={`p-2 rounded-xl border transition-all ${product.is_featured ? "bg-red-50 border-red-100 text-red-400 hover:bg-red-500 hover:text-white" : "bg-green-50 border-green-100 text-green-400 hover:bg-green-500 hover:text-white"}`}
+                            className={`p-2 rounded-xl border transition-all ${product.is_featured ? "bg-amber-50 border-amber-100 text-amber-500 hover:bg-amber-500 hover:text-white" : "bg-gray-50 border-gray-100 text-gray-400 hover:bg-amber-500 hover:text-white"}`}
                             title={
                               product.is_featured
                                 ? "Remove Featured"
@@ -421,6 +498,14 @@ export default function AdminProductsPage() {
                             <Star
                               className={`w-4 h-4 ${product.is_featured ? "fill-current" : ""}`}
                             />
+                          </button>
+
+                          <button
+                            onClick={() => deleteProduct(product.id)}
+                            className="p-2 rounded-xl border bg-red-50 border-red-100 text-red-400 hover:bg-red-500 hover:text-white transition-all"
+                            title="Remove Asset"
+                          >
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
