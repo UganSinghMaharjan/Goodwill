@@ -58,6 +58,13 @@ export default function FeaturedProducts() {
                   alt={product.name}
                   fill
                   className="object-cover transition-transform duration-[1.5s] group-hover:scale-110"
+                  unoptimized={true}
+                  onError={(e) => {
+                    console.error(
+                      `Failed to load image for featured product ${product.id}:`,
+                      product.image_url,
+                    );
+                  }}
                 />
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors duration-500" />
                 <div className="absolute bottom-6 left-6 right-6 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
