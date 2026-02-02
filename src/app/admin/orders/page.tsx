@@ -126,22 +126,22 @@ export default function AdminOrdersPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-[#fcf9f5]/50 no-border">
-                    <th className="px-10 py-6 text-[11px] font-bold text-[#4a403a]/40 uppercase tracking-[0.2em]">
+                    <th className="px-10 py-6 text-[11px] font-bold text-foreground/70 uppercase tracking-[0.2em]">
                       Acquisition ID
                     </th>
-                    <th className="px-6 py-6 text-[11px] font-bold text-[#4a403a]/40 uppercase tracking-[0.2em]">
+                    <th className="px-6 py-6 text-[11px] font-bold text-foreground/70 uppercase tracking-[0.2em]">
                       Client
                     </th>
-                    <th className="px-6 py-6 text-[11px] font-bold text-[#4a403a]/40 uppercase tracking-[0.2em]">
+                    <th className="px-6 py-6 text-[11px] font-bold text-foreground/70 uppercase tracking-[0.2em]">
                       Manifest
                     </th>
-                    <th className="px-6 py-6 text-[11px] font-bold text-[#4a403a]/40 uppercase tracking-[0.2em]">
+                    <th className="px-6 py-6 text-[11px] font-bold text-foreground/70 uppercase tracking-[0.2em]">
                       Valuation
                     </th>
-                    <th className="px-6 py-6 text-[11px] font-bold text-[#4a403a]/40 uppercase tracking-[0.2em]">
+                    <th className="px-6 py-6 text-[11px] font-bold text-foreground/70 uppercase tracking-[0.2em]">
                       Lifecycle
                     </th>
-                    <th className="px-10 py-6 text-[11px] font-bold text-[#4a403a]/40 uppercase tracking-[0.2em] text-right">
+                    <th className="px-10 py-6 text-[11px] font-bold text-foreground/70 uppercase tracking-[0.2em] text-right">
                       Timestamp
                     </th>
                   </tr>
@@ -154,7 +154,7 @@ export default function AdminOrdersPage() {
                     >
                       <td className="px-10 py-8">
                         <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform duration-300">
-                          <span className="font-mono text-[11px] text-[#4a403a]/40 bg-[#fcf9f5] px-2 py-1 rounded border border-[#9f4d2c]/5 uppercase tracking-tighter">
+                          <span className="font-mono text-[11px] text-foreground/80 bg-[#fcf9f5] px-2 py-1 rounded border border-[#9f4d2c]/5 uppercase tracking-tighter">
                             {order.id.substring(0, 8)}...
                           </span>
                         </div>
@@ -168,7 +168,7 @@ export default function AdminOrdersPage() {
                             <span className="font-bold text-[#1a120e] text-sm leading-tight">
                               {order.customer_name}
                             </span>
-                            <span className="text-[11px] font-medium text-[#4a403a]/50 mt-1">
+                            <span className="text-[11px] font-medium text-foreground/60 mt-1">
                               {order.email}
                             </span>
                           </div>

@@ -227,7 +227,7 @@ export default function AdminProductsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
         {/* Add Product Form - Modern Sidebar Style */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-[2rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-[#9f4d2c]/5 lg:sticky lg:top-28">
+          <div className="bg-white rounded-[2rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-[#9f4d2c]/5 sticky top-28">
             <div className="flex items-center gap-3 mb-8">
               <div className="p-2.5 bg-[#9f4d2c]/10 rounded-xl text-[#9f4d2c]">
                 <Plus className="w-5 h-5" />
@@ -237,7 +237,7 @@ export default function AdminProductsPage() {
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-[#4a403a]/60 uppercase tracking-widest flex items-center gap-2 px-1">
+                <label className="text-xs font-bold text-foreground/60 uppercase tracking-widest flex items-center gap-2 px-1">
                   <Type className="w-3 h-3" /> Asset Name
                 </label>
                 <input
@@ -246,7 +246,7 @@ export default function AdminProductsPage() {
                   placeholder="e.g. Minimalist Oak Table"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-[#fcf9f5] border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all"
+                  className="w-full px-4 py-3 bg-[#fcf9f5] text-foreground border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all"
                   required
                 />
               </div>
@@ -259,7 +259,7 @@ export default function AdminProductsPage() {
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-[#fcf9f5] border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all appearance-none"
+                  className="w-full px-4 py-3 bg-[#fcf9f5] text-foreground  border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all appearance-none"
                   required
                 >
                   <option value="">Select Category</option>
@@ -280,7 +280,7 @@ export default function AdminProductsPage() {
                   placeholder="0.00"
                   value={formData.price}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-[#fcf9f5] border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all"
+                  className="w-full px-4 py-3 bg-[#fcf9f5] text-foreground border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all"
                   required
                 />
               </div>
@@ -321,7 +321,7 @@ export default function AdminProductsPage() {
                   value={formData.description}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full px-4 py-3 bg-[#fcf9f5] border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all resize-none"
+                  className="w-full px-4 py-3 bg-[#fcf9f5] text-foreground border border-[#9f4d2c]/5 rounded-2xl text-sm focus:outline-none focus:border-[#9f4d2c]/20 transition-all resize-none"
                 />
               </div>
 
@@ -456,7 +456,7 @@ export default function AdminProductsPage() {
                         ) : (
                           <div className="flex items-center gap-1.5 text-[#4a403a]/20">
                             <XCircle className="w-3.5 h-3.5" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">
+                            <span className="text-[10px]  text-foreground/50 font-bold uppercase tracking-wider">
                               Regular
                             </span>
                           </div>

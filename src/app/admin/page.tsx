@@ -132,6 +132,20 @@ export default function AdminDashboard() {
     totalUsers: 0,
     totalRevenue: 0,
   });
+  // Initialize with 7 days of empty data to ensure chart labels show immediately
+  const [dailyRevenue, setDailyRevenue] = useState<
+    { day: string; amount: number; height: number }[]
+  >(
+    [...Array(7)].map((_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      return {
+        day: d.toLocaleDateString("en-US", { weekday: "narrow" }),
+        amount: 0,
+        height: 0,
+      };
+    }),
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -154,6 +168,43 @@ export default function AdminDashboard() {
           totalUsers: users.length,
           totalRevenue: revenue,
         });
+
+        // Process daily revenue for the last 7 days (Local-Time Robust)
+        const dailyTotals = [...Array(7)].map((_, i) => {
+          const d = new Date();
+          // Adjust to get the correct history window in local time
+          d.setDate(d.getDate() - (6 - i));
+
+          // Format as YYYY-MM-DD in local time for robust matching
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, "0");
+          const day = String(d.getDate()).padStart(2, "0");
+          const localDateStr = `${year}-${month}-${day}`;
+
+          const dayTotal = (orders || [])
+            .filter((order) => {
+              if (!order || !order.created_at) return false;
+              // Match strictly on the date part (YYYY-MM-DD)
+              const orderDate = order.created_at.split(/[T ]/)[0];
+              return orderDate === localDateStr;
+            })
+            .reduce((sum, order) => sum + (order.total_amount || 0), 0);
+
+          return {
+            day: d.toLocaleDateString("en-US", { weekday: "narrow" }),
+            amount: dayTotal,
+          };
+        });
+
+        const revenueSum = dailyTotals.reduce((s, d) => s + d.amount, 0);
+        const maxTotal = Math.max(...dailyTotals.map((d) => d.amount), 1);
+
+        const processedDailyData = dailyTotals.map((d) => ({
+          ...d,
+          height: revenueSum > 0 ? (d.amount / maxTotal) * 100 : 0,
+        }));
+
+        setDailyRevenue(processedDailyData);
       } catch (error) {
         console.error("Failed to load dashboard stats", error);
       } finally {
@@ -270,35 +321,76 @@ export default function AdminDashboard() {
 
       {/* Mock Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 bg-white p-10 rounded-[2.5rem] border border-[#9f4d2c]/5 shadow-sm">
-          <div className="flex justify-between items-center mb-10">
-            <h3 className="text-xl font-bold text-[#1a120e]">
-              Revenue Trajectory
-            </h3>
-            <select className="bg-[#fcf9f5] border-none text-xs font-bold text-[#4a403a] rounded-lg px-4 py-2 focus:ring-0">
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
+        <div className="lg:col-span-8 bg-[#1a120e] p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden border border-white/5">
+          {/* Subtle architectural background detail */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#9f4d2c]/5 blur-[100px] -mr-32 -mt-32" />
+
+          <div className="flex justify-between items-center mb-10 relative z-10">
+            <div className="space-y-1">
+              <h3 className="text-xl font-bold text-white">
+                Revenue Trajectory
+              </h3>
+              <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                Aggregated performance • Real-time Surveillance
+              </p>
+            </div>
+            <select className="bg-white/5 border border-white/10 text-xs font-bold text-white rounded-lg px-4 py-2 focus:ring-1 focus:ring-[#9f4d2c]/40 outline-none appearance-none cursor-pointer hover:bg-white/10 transition-colors">
+              <option className="bg-[#1a120e]">Last 7 Days</option>
+              <option className="bg-[#1a120e]">Last 30 Days</option>
             </select>
           </div>
-          <div className="h-64 flex items-end justify-between gap-4">
-            {[40, 70, 45, 90, 65, 85, 100].map((height, i) => (
-              <div
-                key={i}
-                className="flex-1 flex flex-col items-center gap-4 group"
-              >
-                <div className="w-full relative">
-                  <div
-                    className="w-full bg-[#9f4d2c]/10 rounded-t-xl group-hover:bg-[#9f4d2c]/20 transition-all duration-500"
-                    style={{ height: `${height}%` }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#9f4d2c] to-[#9f4d2c]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-t-xl" />
-                  </div>
+
+          <div className="relative h-64 z-10">
+            {/* Background Grid - Enhanced Visibility */}
+            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="w-full h-px bg-white/10" />
+              ))}
+            </div>
+
+            {dailyRevenue.every((d) => d.amount === 0) && !loading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-20">
+                <div className="p-3 bg-white/5 rounded-full">
+                  <TrendingUp className="w-6 h-6 text-white/20" />
                 </div>
-                <span className="text-[10px] font-bold text-[#4a403a]/40 uppercase tracking-widest">
-                  {["M", "T", "W", "T", "F", "S", "S"][i]}
-                </span>
+                <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">
+                  No recent revenue recorded
+                </p>
               </div>
-            ))}
+            )}
+
+            <div className="relative h-full flex items-end justify-between gap-4">
+              {dailyRevenue.map((data, i) => (
+                <div
+                  key={i}
+                  className="flex-1 flex flex-col items-center group h-full"
+                >
+                  <div className="flex-1 w-full relative group/bar cursor-pointer flex items-end justify-center">
+                    {/* Tooltip */}
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-[#1a120e] text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all duration-300 pointer-events-none z-20 whitespace-nowrap shadow-xl translate-y-2 group-hover/bar:translate-y-0">
+                      ${data.amount.toLocaleString()}
+                    </div>
+
+                    <div
+                      className="w-full bg-white/5 rounded-t-xl group-hover/bar:bg-white/10 transition-all duration-500 relative"
+                      style={{
+                        height: `${Math.max(data.height, data.amount > 0 ? 5 : 0)}%`,
+                      }}
+                    >
+                      {data.amount > 0 && (
+                        <>
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#9f4d2c] via-[#9f4d2c]/80 to-[#9f4d2c]/40 opacity-90 group-hover/bar:opacity-100 transition-opacity duration-500 rounded-t-xl shadow-[0_0_30px_rgba(159,77,44,0.2)]" />
+                          <div className="absolute top-0 left-0 right-0 h-1 bg-[#9f4d2c] blur-sm opacity-50" />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-white transition-colors mt-4">
+                    {data.day}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -311,7 +403,7 @@ export default function AdminDashboard() {
             {[
               { label: "Direct Organic", value: "64%", color: "bg-[#9f4d2c]" },
               { label: "Referral Link", value: "23%", color: "bg-white" },
-              { label: "Social Media", value: "13%", color: "bg-white/20" },
+              { label: "Social Media", value: "13%", color: "bg-pink-400/20" },
             ].map((item, i) => (
               <div key={i} className="space-y-2">
                 <div className="flex justify-between text-xs font-bold">

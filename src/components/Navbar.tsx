@@ -120,6 +120,13 @@ export default function Navbar() {
               >
                 Dining Room
               </Link>
+              <div className="mx-6 my-2 h-px bg-foreground/5" />
+              <Link
+                href="/collections"
+                className="block px-6 py-2 text-sm text-primary font-bold hover:bg-primary/5 transition-colors"
+              >
+                View All Collections
+              </Link>
             </div>
           </div>
           <Link
@@ -358,6 +365,15 @@ export default function Navbar() {
             >
               Dining Room
             </Link>
+            <div className="pt-2">
+              <Link
+                href="/collections"
+                onClick={() => setMobileMenuOpen(false)}
+                className="inline-block text-sm font-bold text-primary border-b-2 border-primary/20 pb-1"
+              >
+                View All Collections
+              </Link>
+            </div>
           </div>
 
           <div className="h-px bg-foreground/5" />

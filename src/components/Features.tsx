@@ -51,7 +51,7 @@ export default function Categories() {
             </p>
           </div>
           <button
-            onClick={() => handleExplore("/collections/living-room")}
+            onClick={() => handleExplore("/collections")}
             className="font-bold text-primary border-b-2 border-primary pb-1 hover:text-primary-hover hover:border-primary-hover transition-all"
           >
             View All Collections

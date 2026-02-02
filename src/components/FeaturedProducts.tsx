@@ -109,7 +109,9 @@ export default function FeaturedProducts() {
               </div>
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl font-bold mb-1">{product.name}</h3>
+                  <h3 className="text-xl text-foreground font-bold mb-1">
+                    {product.name}
+                  </h3>
                   <p className="text-foreground text-xs font-extrabold uppercase tracking-widest">
                     {product.category.replace("-", " ")}
                   </p>
