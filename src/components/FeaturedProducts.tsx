@@ -21,9 +21,10 @@ export default function FeaturedProducts() {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        // Fetch products from 'bedroom' category as an example
-        const data = await apiFetch<Product[]>("/products/bedroom");
-        setProducts(data.slice(0, 3));
+        const data = await apiFetch<Product[]>("/products"); // Fetch all products
+        // Filter for featured ones
+        const featured = data.filter((p: any) => p.is_featured);
+        setProducts(featured.slice(0, 3)); // Show top 3 featured
       } catch (error) {
         console.error("Error fetching featured products:", error);
       } finally {

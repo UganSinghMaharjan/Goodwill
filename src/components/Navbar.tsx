@@ -78,6 +78,12 @@ export default function Navbar() {
             About Us
           </Link>
           <Link
+            href="/"
+            className="text-foreground hover:text-primary transition-colors font-medium"
+          >
+            Contact
+          </Link>
+          <Link
             href="/#showroom"
             className="text-sm font-medium text-foreground hover:text-primary transition-colors"
           >
@@ -101,7 +107,7 @@ export default function Navbar() {
                 <div className="absolute top-full right-0 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0">
                   {user?.role === "admin" && (
                     <Link
-                      href="/admin"
+                      href="/admin/products"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary"
                     >
                       <Settings className="w-4 h-4 mr-2" />
