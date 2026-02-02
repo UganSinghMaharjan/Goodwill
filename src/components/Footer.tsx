@@ -27,7 +27,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="#"
-                    className="hover:text-primary transition-colors"
+                    className="text-accent hover:text-primary transition-colors"
                   >
                     Features
                   </Link>
@@ -35,7 +35,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="#"
-                    className="hover:text-primary transition-colors"
+                    className="text-accent hover:text-primary transition-colors"
                   >
                     Pricing
                   </Link>
@@ -43,7 +43,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="#"
-                    className="hover:text-primary transition-colors"
+                    className="text-accent hover:text-primary transition-colors"
                   >
                     Demo
                   </Link>
@@ -58,7 +58,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="#"
-                    className="hover:text-primary transition-colors"
+                    className="text-accent hover:text-primary transition-colors"
                   >
                     About
                   </Link>
@@ -66,7 +66,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="#"
-                    className="hover:text-primary transition-colors"
+                    className="text-accent hover:text-primary transition-colors"
                   >
                     Careers
                   </Link>
@@ -74,7 +74,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="#"
-                    className="hover:text-primary transition-colors"
+                    className="text-accent hover:text-primary transition-colors"
                   >
                     Contact
                   </Link>
@@ -89,7 +89,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="#"
-                    className="hover:text-primary transition-colors"
+                    className="text-accent hover:text-primary transition-colors"
                   >
                     Privacy
                   </Link>
@@ -97,7 +97,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="#"
-                    className="hover:text-primary transition-colors"
+                    className="text-accent hover:text-primary transition-colors"
                   >
                     Terms
                   </Link>

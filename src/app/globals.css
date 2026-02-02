@@ -2,19 +2,19 @@
 
 :root {
   --background: #fcf9f5; /* Warm Creamy background */
-  --foreground: #2a1e17; /* Deep Espresso Brown for maximum legibility */
+  --foreground: #1a120e; /* Deep Espresso Brown (Darkened) for maximum legibility */
   --primary: #9f4d2c; /* Terracotta Primary */
   --primary-hover: #863d22;
-  --secondary: #5f5248; /* Dark Muted Earth Brown */
+  --secondary: #4a403a; /* Dark Muted Earth Brown (Darkened) */
   --accent: #f5ebe0; /* Soft Peach Wash */
 }
 
 @theme {
   --color-background: #fcf9f5;
-  --color-foreground: #2a1e17;
+  --color-foreground: #1a120e;
   --color-primary: #9f4d2c;
   --color-primary-hover: #863d22;
-  --color-secondary: #5f5248;
+  --color-secondary: #4a403a;
   --color-accent: #f5ebe0;
 
   --font-sans: var(--font-geist-sans);
@@ -24,8 +24,9 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0f1115; /* Sleek Deep Dark */
-    --foreground: #4f4f4f;
-    --primary: #6366f1;
+    --foreground: #ededed; /* Bright White-Grey for dark mode */
+    --primary: #818cf8; /* Bright Indigo for contrast */
+    --secondary: #a1a1aa; /* Light Grey for secondary text */
     --accent: #1e1b4b;
   }
 }

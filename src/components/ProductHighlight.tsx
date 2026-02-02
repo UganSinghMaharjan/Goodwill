@@ -45,7 +45,7 @@ export default function ProductHighlight() {
               Crafted with Integrity, Designed for Comfort.
             </h2>
             <div className="space-y-6">
-              <p className="text-lg text-foreground font-bold leading-relaxed text-center lg:text-left">
+              <p className="text-lg text-accent font-bold leading-relaxed text-center lg:text-left">
                 Every piece at Goodwill tells a story of meticulous
                 craftsmanship. We believe that furniture isn't just about
                 utility—it's about creating an atmosphere that inspires.
@@ -58,7 +58,7 @@ export default function ProductHighlight() {
                 ].map((item, i) => (
                   <li
                     key={i}
-                    className="flex items-center space-x-3 text-foreground font-extrabold italic"
+                    className="flex items-center space-x-3 text-accent font-extrabold italic"
                   >
                     <svg
                       className="w-5 h-5 text-primary flex-shrink-0"
@@ -78,7 +78,7 @@ export default function ProductHighlight() {
                 ))}
               </ul>
               <div className="pt-8 flex justify-center lg:justify-start">
-                <button className="px-8 py-4 font-bold text-primary border-2 border-primary rounded-xl hover:bg-primary hover:text-white transition-all shadow-lg shadow-primary/5">
+                <button className="px-8 py-4 font-bold text-accent border-2 border-primary rounded-xl hover:bg-primary hover:text-white transition-all shadow-lg shadow-primary/5">
                   Our Story
                 </button>
               </div>

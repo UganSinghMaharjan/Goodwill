@@ -42,7 +42,7 @@ export default function Categories() {
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
           <div className="max-w-xl">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-foreground">
               Shop by Collection
             </h2>
             <p className="text-foreground text-lg font-medium">
