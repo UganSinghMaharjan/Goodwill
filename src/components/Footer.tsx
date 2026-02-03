@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -6,11 +7,13 @@ export default function Footer() {
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-8 md:mb-0 text-center md:text-left">
-            <Link
-              href="/"
-              className="text-2xl font-bold tracking-tight text-primary"
-            >
-              Goodwill<span className="text-foreground">.</span>
+            <Link href="/" className="relative w-48 h-14 block mb-6">
+              <Image
+                src="/images/TGFWHITE.png"
+                alt="Goodwill Logo"
+                fill
+                className="object-contain"
+              />
             </Link>
             <p className="mt-4 text-primary font-bold text-sm max-w-xs">
               Building the future of digital impact with modern engineering and

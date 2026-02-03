@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
@@ -14,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function AdminLayout({
   children,
@@ -46,13 +48,13 @@ export default function AdminLayout({
         }`}
       >
         <div className="p-8">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-[#9f4d2c] rounded-xl flex items-center justify-center transform transition-transform group-hover:rotate-12">
-              <span className="text-white font-bold text-xl">G</span>
-            </div>
-            <span className="text-2xl font-bold tracking-tight text-[#1a120e]">
-              Goodwill<span className="text-[#9f4d2c]">.</span>
-            </span>
+          <Link href="/" className="block relative w-48 h-10 group">
+            <Image
+              src="/images/TGFWHITE.png"
+              alt="Goodwill Logo"
+              fill
+              className="object-contain"
+            />
           </Link>
           <div className="mt-2 text-xs font-bold text-[#4a403a]/50 uppercase tracking-widest px-1">
             Admin Suite
@@ -140,7 +142,9 @@ export default function AdminLayout({
           {/* Subtle background decoration */}
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#9f4d2c]/5 blur-[120px] rounded-full -mr-64 -mt-64 pointer-events-none" />
 
-          <div className="relative z-10">{children}</div>
+          <div className="relative z-10">
+            <ProtectedRoute adminOnly={true}>{children}</ProtectedRoute>
+          </div>
         </main>
       </div>
     </div>

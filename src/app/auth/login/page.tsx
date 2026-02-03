@@ -7,8 +7,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { apiFetch } from "@/app/lib/api";
 import toast from "react-hot-toast";
-import { motion } from "framer-motion";
-import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
@@ -57,10 +55,8 @@ export default function LoginPage() {
 
       <div className="flex-grow flex items-center justify-center pt-32 pb-24 px-6">
         <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-10 border border-primary/10">
-          <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold text-foreground mb-4">
-              Welcome Back
-            </h1>
+          <div className="text-center mb-10 text-foreground">
+            <h1 className="text-3xl font-bold mb-4">Welcome Back</h1>
             <p className="text-secondary font-semibold italic">
               Continue your journey with Goodwill.
             </p>

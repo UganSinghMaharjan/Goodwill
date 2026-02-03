@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Image from "next/image";
 
 export default function ProductHighlight() {
@@ -78,9 +79,12 @@ export default function ProductHighlight() {
                 ))}
               </ul>
               <div className="pt-8 flex justify-center lg:justify-start">
-                <button className="px-8 py-4 font-bold text-accent border-2 border-primary rounded-xl hover:bg-primary hover:text-white transition-all shadow-lg shadow-primary/5">
+                <Link
+                  href="/about"
+                  className="px-8 py-4 font-bold text-accent border-2 border-primary rounded-xl hover:bg-primary hover:text-white transition-all shadow-lg shadow-primary/5"
+                >
                   Our Story
-                </button>
+                </Link>
               </div>
             </div>
           </div>

@@ -32,7 +32,7 @@ export default function Hero() {
           </p>
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
             <Link
-              href="/#collections"
+              href="/collections"
               className="w-full sm:w-auto px-10 py-5 text-lg font-bold text-center text-white bg-primary rounded-xl hover:bg-primary-hover transition-all transform hover:scale-105 shadow-xl shadow-primary/10"
             >
               Explore Collections
@@ -43,7 +43,6 @@ export default function Hero() {
             >
               Our Story
             </Link>
-            s
           </div>
         </div>
       </div>

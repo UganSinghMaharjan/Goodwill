@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -8,12 +9,11 @@ import {
   LogOut,
   Settings,
   ShoppingCart,
-  Trash2,
   Plus,
   Minus,
   Menu,
   X,
-  ChevronDown,
+  LayoutDashboard,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
@@ -77,13 +77,22 @@ export default function Navbar() {
       }`}
     >
       <div className="container mx-auto px-6 flex justify-between items-center">
-        <Link
-          href="/"
-          className="text-2xl font-bold tracking-tight text-primary"
-        >
-          Goodwill<span className="text-foreground"></span>
+        <Link href="/" className="relative w-40 h-12 md:w-56 md:h-16 -ml-2">
+          <Image
+            src={scrolled ? "/images/TGFBLACK.png" : "/images/TGFBLACK.png"}
+            alt="Goodwill Logo"
+            fill
+            className="object-contain"
+            priority
+          />
         </Link>
         <div className="hidden md:flex items-center space-x-8">
+          <Link
+            href="/#showroom"
+            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+          >
+            Showroom
+          </Link>
           <div className="relative group">
             <button className="text-sm font-medium text-foreground hover:text-primary transition-colors flex items-center gap-1">
               Collections
@@ -135,18 +144,12 @@ export default function Navbar() {
           >
             About Us
           </Link>
-          <Link
+          {/* <Link
             href="/"
             className="text-foreground hover:text-primary transition-colors font-medium"
           >
             Contact
-          </Link>
-          <Link
-            href="/#showroom"
-            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-          >
-            Showroom
-          </Link>
+          </Link> */}
         </div>
         <div className="flex items-center space-x-2 md:space-x-4">
           {/* Cart Dropdown */}
@@ -172,7 +175,9 @@ export default function Navbar() {
                   : "opacity-0 invisible pointer-events-none"
               }`}
             >
-              <h3 className="text-lg font-bold mb-4 px-2">Your Cart</h3>
+              <h3 className="text-lg text-foreground/70 font-bold mb-4 px-2">
+                Your Cart
+              </h3>
 
               {cart.length === 0 ? (
                 <div className="text-center py-8">
@@ -290,6 +295,13 @@ export default function Navbar() {
                       Admin Panel
                     </Link>
                   )}
+                  <Link
+                    href="/profile"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary"
+                  >
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </Link>
                   <button
                     onClick={logout}
                     className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
@@ -340,6 +352,18 @@ export default function Navbar() {
         }`}
       >
         <div className="container mx-auto px-6 py-10 flex flex-col gap-8">
+          <Link
+            href="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="relative w-32 h-10"
+          >
+            <Image
+              src="/images/TGFBLACK.png"
+              alt="Goodwill Logo"
+              fill
+              className="object-contain"
+            />
+          </Link>
           <div className="space-y-4">
             <h4 className="text-[10px] font-bold text-foreground/30 uppercase tracking-[0.2em] mb-4">
               Collections

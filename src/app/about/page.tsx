@@ -4,18 +4,18 @@ import Image from "next/image";
 
 export default function AboutPage() {
   const suggestedHours = [
-    { day: "Monday", hours: "9:00 AM – 7:00 PM", status: "Open" },
-    { day: "Tuesday", hours: "9:00 AM – 7:00 PM", status: "Open" },
-    { day: "Wednesday", hours: "9:00 AM – 7:00 PM", status: "Open" },
-    { day: "Thursday", hours: "9:00 AM – 7:00 PM", status: "Open" },
-    { day: "Friday", hours: "9:00 AM – 7:00 PM", status: "Open" },
+    { day: "Monday", hours: "9:00 AM – 5:00 PM", status: "Open" },
+    { day: "Tuesday", hours: "9:00 AM – 5:00 PM", status: "Open" },
+    { day: "Wednesday", hours: "9:00 AM – 5:00 PM", status: "Open" },
+    { day: "Thursday", hours: "9:00 AM – 5:00 PM", status: "Open" },
+    { day: "Friday", hours: "9:00 AM – 5:00 PM", status: "Open" },
     {
       day: "Saturday",
-      hours: "10:00 AM – 2:00 PM",
-      status: "Weekend Hours",
+      hours: "Closed ",
+      status: "closed",
       note: "Suggested",
     },
-    { day: "Sunday", hours: "9:00 AM – 7:00 PM", status: "Open" },
+    { day: "Sunday", hours: "9:00 AM – 5:00 PM", status: "Open" },
   ];
 
   return (
@@ -119,7 +119,7 @@ export default function AboutPage() {
               </div>
 
               <div className="overflow-hidden border border-accent/20 rounded-2xl">
-                <table className="w-full text-left">
+                <table className="w-full text-center">
                   <thead className="bg-primary/50 text-foreground text-xs font-bold uppercase tracking-wider">
                     <tr>
                       <th className="px-6 py-4">Day</th>
