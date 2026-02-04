@@ -31,6 +31,17 @@ export default function AdminLayout({
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".relative")) {
+        setNotificationsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
     async function fetchNotifications() {
       try {
         const orders = await apiFetch<any[]>("/orders");
@@ -44,7 +55,23 @@ export default function AdminLayout({
           .slice(0, 5);
 
         setNotifications(recentOrders);
-        setUnreadCount(recentOrders.length); // For now, all fetched are considered "new"
+
+        // Calculate unread count based on last seen ID in localStorage
+        const lastSeenId = localStorage.getItem("last_seen_order_id");
+        if (recentOrders.length > 0) {
+          if (!lastSeenId) {
+            // First time, count all as unread
+            setUnreadCount(recentOrders.length);
+          } else {
+            // Count orders that are newer than lastSeenId
+            // We assume IDs or created_at timestamps can be used to determine "newness"
+            // Since they are already sorted desc, we count until we hit lastSeenId
+            const newCount = recentOrders.findIndex(
+              (o) => String(o.id) === lastSeenId,
+            );
+            setUnreadCount(newCount === -1 ? recentOrders.length : newCount);
+          }
+        }
       } catch (error) {
         console.error("Failed to fetch notifications", error);
       }
@@ -162,7 +189,16 @@ export default function AdminLayout({
               <button
                 onClick={() => {
                   setNotificationsOpen(!notificationsOpen);
-                  setUnreadCount(0);
+                  if (!notificationsOpen) {
+                    // When opening, mark the top order as the last seen
+                    setUnreadCount(0);
+                    if (notifications.length > 0) {
+                      localStorage.setItem(
+                        "last_seen_order_id",
+                        String(notifications[0].id),
+                      );
+                    }
+                  }
                 }}
                 className="relative p-2 text-[#4a403a] hover:text-[#9f4d2c] transition-colors"
               >
