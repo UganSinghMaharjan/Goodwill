@@ -29,6 +29,26 @@ export default function AdminLayout({
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [todaysNote, setTodaysNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTodaysNote = () => {
+      const savedNotes = localStorage.getItem("intelligence_notes");
+      if (savedNotes) {
+        const parsedNotes = JSON.parse(savedNotes);
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+        const dateStr = `${year}-${month}-${day}`;
+        setTodaysNote(parsedNotes[dateStr] || null);
+      }
+    };
+
+    fetchTodaysNote();
+    // Also check when notifications open to get latest
+    if (notificationsOpen) fetchTodaysNote();
+  }, [notificationsOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -221,6 +241,30 @@ export default function AdminLayout({
                     </span>
                   </div>
                   <div className="max-h-96 overflow-y-auto">
+                    {/* Tactical Reminder Note */}
+                    {todaysNote && (
+                      <div className="p-4 bg-[#9f4d2c]/5 border-b border-[#9f4d2c]/10 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-[#9f4d2c]/5 blur-2xl -mr-12 -mt-12" />
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-1.5 h-1.5 bg-[#9f4d2c] rounded-full animate-pulse" />
+                          <span className="text-[9px] font-black text-[#9f4d2c] uppercase tracking-[0.2em]">
+                            Tactical Reminder
+                          </span>
+                        </div>
+                        <p className="text-xs font-medium text-[#1a120e] leading-relaxed italic">
+                          "{todaysNote}"
+                        </p>
+                        <Link
+                          href="/admin"
+                          onClick={() => setNotificationsOpen(false)}
+                          className="mt-3 inline-flex items-center gap-1.5 text-[9px] font-bold text-[#9f4d2c]/60 hover:text-[#9f4d2c] transition-colors uppercase tracking-widest"
+                        >
+                          Modify Intel Briefing{" "}
+                          <ArrowLeft className="w-2.5 h-2.5 rotate-180" />
+                        </Link>
+                      </div>
+                    )}
+
                     {notifications.length > 0 ? (
                       notifications.map((order) => (
                         <div
@@ -274,7 +318,7 @@ export default function AdminLayout({
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6 lg:p-10 relative">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-6 lg:p-10 relative">
           {/* Subtle background decoration */}
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#9f4d2c]/5 blur-[120px] rounded-full -mr-64 -mt-64 pointer-events-none" />
 

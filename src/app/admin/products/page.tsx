@@ -204,14 +204,14 @@ export default function AdminProductsPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="relative">
+          <div className="relative w-full xs:w-auto">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4a403a]/40" />
             <input
               type="text"
               placeholder="Search assets..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2.5 bg-white border border-[#9f4d2c]/10 rounded-xl text-sm focus:outline-none focus:border-[#9f4d2c] transition-all w-64 shadow-sm"
+              className="pl-10 pr-4 py-2.5 bg-white border border-[#9f4d2c]/10 rounded-xl text-sm focus:outline-none focus:border-[#9f4d2c] transition-all w-full xs:w-64 shadow-sm"
             />
           </div>
           <button
@@ -227,7 +227,7 @@ export default function AdminProductsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
         {/* Add Product Form - Modern Sidebar Style */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-[2rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-[#9f4d2c]/5 sticky top-28">
+          <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-[#9f4d2c]/5 lg:sticky lg:top-28">
             <div className="flex items-center gap-3 mb-8">
               <div className="p-2.5 bg-[#9f4d2c]/10 rounded-xl text-[#9f4d2c]">
                 <Plus className="w-5 h-5" />
@@ -370,7 +370,7 @@ export default function AdminProductsPage() {
         {/* Product List - Modern Table Style */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-[#9f4d2c]/5">
-            <div className="px-8 py-6 border-b border-[#9f4d2c]/5 flex items-center justify-between">
+            <div className="px-6 md:px-8 py-6 border-b border-[#9f4d2c]/5 flex items-center justify-between">
               <h2 className="text-xl font-bold text-[#1a120e]">
                 Asset Registry
               </h2>
@@ -426,10 +426,10 @@ export default function AdminProductsPage() {
                             <div className="font-bold text-[#1a120e] text-sm leading-tight">
                               {product.name}
                             </div>
-                            <div className="text-[10px] font-medium text-[#4a403a]/40 mt-0.5 tracking-tight capitalize">
+                            <div className="text-[10px] font-medium text-[#4a403a]/40 mt-0.5 tracking-tight capitalize truncate max-w-[120px]">
                               {product.category}
                             </div>
-                            <div className="text-[8px] text-gray-400 break-all max-w-[150px] mt-1">
+                            <div className="text-[8px] text-gray-400 truncate max-w-[120px] mt-1">
                               URL: {product.image_url}
                             </div>
                           </div>

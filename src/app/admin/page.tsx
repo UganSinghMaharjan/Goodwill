@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { apiFetch } from "@/app/lib/api";
+import toast from "react-hot-toast";
 import {
   BarChart3,
   Package,
@@ -23,38 +24,50 @@ interface Stats {
   totalRevenue: number;
 }
 
-function ExecutiveCalendar() {
-  const [currentDate, setCurrentDate] = useState(new Date());
+interface CalendarProps {
+  selectedDate: Date;
+  onDateSelect: (date: Date) => void;
+  notes: Record<string, string>;
+}
+
+function ExecutiveCalendar({
+  selectedDate,
+  onDateSelect,
+  notes,
+}: CalendarProps) {
+  const [currentViewDate, setCurrentViewDate] = useState(
+    new Date(selectedDate),
+  );
 
   const daysInMonth = (year: number, month: number) =>
     new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = (year: number, month: number) =>
     new Date(year, month, 1).getDay();
 
-  const monthName = currentDate.toLocaleString("default", { month: "long" });
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  const monthName = currentViewDate.toLocaleString("default", {
+    month: "long",
+  });
+  const year = currentViewDate.getFullYear();
+  const month = currentViewDate.getMonth();
 
   const days = [];
   const totalDays = daysInMonth(year, month);
   const startDay = firstDayOfMonth(year, month);
 
-  // Add empty slots for days before the first day of the month
   for (let i = 0; i < startDay; i++) {
     days.push(null);
   }
 
-  // Add actual days
   for (let i = 1; i <= totalDays; i++) {
     days.push(i);
   }
 
   const prevMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1));
+    setCurrentViewDate(new Date(year, month - 1, 1));
   };
 
   const nextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1));
+    setCurrentViewDate(new Date(year, month + 1, 1));
   };
 
   const isToday = (day: number | null) => {
@@ -65,6 +78,21 @@ function ExecutiveCalendar() {
       month === today.getMonth() &&
       year === today.getFullYear()
     );
+  };
+
+  const isSelected = (day: number | null) => {
+    if (!day) return false;
+    return (
+      day === selectedDate.getDate() &&
+      month === selectedDate.getMonth() &&
+      year === selectedDate.getFullYear()
+    );
+  };
+
+  const hasNote = (day: number | null) => {
+    if (!day) return false;
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    return !!notes[dateStr];
   };
 
   return (
@@ -89,7 +117,7 @@ function ExecutiveCalendar() {
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-y-4 text-center">
+      <div className="grid grid-cols-7 gap-y-2 text-center">
         {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
           <span
             key={`${d}-${i}`}
@@ -101,23 +129,27 @@ function ExecutiveCalendar() {
         {days.map((day, i) => (
           <div
             key={i}
-            className={`text-xs font-bold py-1.5 relative ${
-              day ? "text-white/80" : ""
-            } ${isToday(day) ? "text-white" : ""}`}
+            onClick={() => day && onDateSelect(new Date(year, month, day))}
+            className={`text-[11px] font-bold py-2 relative cursor-pointer rounded-lg transition-all duration-300 ${
+              day ? "hover:bg-white/5 active:scale-95" : "pointer-events-none"
+            } ${isSelected(day) ? "bg-[#9f4d2c] text-white" : day ? "text-white/60" : ""} ${isToday(day) && !isSelected(day) ? "text-[#9f4d2c]" : ""}`}
           >
             {day}
-            {isToday(day) && (
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#9f4d2c] rounded-full" />
+            {hasNote(day) && (
+              <div
+                className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${isSelected(day) ? "bg-white" : "bg-[#9f4d2c]"}`}
+              />
             )}
           </div>
         ))}
       </div>
 
-      <div className="mt-8 pt-6 border-t border-white/10">
+      <div className="mt-6 pt-5 border-t border-white/10">
         <div className="flex items-center gap-3">
           <div className="w-1.5 h-1.5 bg-[#9f4d2c] rounded-full animate-pulse" />
-          <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-            Surveillance Day: {new Date().getDate()} {monthName}
+          <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest leading-none">
+            Selected surveillance date: {selectedDate.getDate()}{" "}
+            {selectedDate.toLocaleString("default", { month: "short" })}
           </span>
         </div>
       </div>
@@ -146,7 +178,45 @@ export default function AdminDashboard() {
       };
     }),
   );
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [currentNote, setCurrentNote] = useState("");
+
+  useEffect(() => {
+    // Load notes from localStorage
+    const savedNotes = localStorage.getItem("intelligence_notes");
+    if (savedNotes) {
+      const parsedNotes = JSON.parse(savedNotes);
+      setNotes(parsedNotes);
+
+      const dateStr = formatDateKey(selectedDate);
+      setCurrentNote(parsedNotes[dateStr] || "");
+    }
+  }, []);
+
+  const formatDateKey = (date: Date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+    const dateStr = formatDateKey(date);
+    setCurrentNote(notes[dateStr] || "");
+  };
+
+  const saveNote = () => {
+    const dateStr = formatDateKey(selectedDate);
+    const updatedNotes = { ...notes, [dateStr]: currentNote };
+    setNotes(updatedNotes);
+    localStorage.setItem("intelligence_notes", JSON.stringify(updatedNotes));
+    toast.success("Intelligence note archived");
+  };
 
   useEffect(() => {
     async function loadStats() {
@@ -205,6 +275,16 @@ export default function AdminDashboard() {
         }));
 
         setDailyRevenue(processedDailyData);
+
+        // Sort orders by date descending and take last 4 for the feed
+        const sortedOrders = orders
+          .sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime(),
+          )
+          .slice(0, 4);
+        setRecentOrders(sortedOrders);
       } catch (error) {
         console.error("Failed to load dashboard stats", error);
       } finally {
@@ -213,6 +293,23 @@ export default function AdminDashboard() {
     }
     loadStats();
   }, []);
+
+  const getStatusStyle = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return "bg-[#fcf5ed] text-[#9f4d2c]";
+      case "processing":
+        return "bg-[#3b2b24] text-[#fcf9f5]";
+      case "shipped":
+        return "bg-[#6b5c54] text-[#fcf9f5]";
+      case "delivered":
+        return "bg-[#4a7862] text-[#fcf9f5]";
+      case "cancelled":
+        return "bg-[#8b3a3a] text-[#fcf9f5]";
+      default:
+        return "bg-[#fcf9f5] text-[#4a403a]";
+    }
+  };
 
   const statCards = [
     {
@@ -288,7 +385,7 @@ export default function AdminDashboard() {
         {statCards.map((stat, i) => (
           <div
             key={i}
-            className="bg-white p-8 rounded-[2rem] border border-[#9f4d2c]/5 shadow-sm hover:shadow-xl transition-all duration-500 group"
+            className="bg-white p-6 md:p-8 rounded-[2rem] border border-[#9f4d2c]/5 shadow-sm hover:shadow-xl transition-all duration-500 group overflow-hidden relative"
           >
             <div className="flex justify-between items-start mb-6">
               <div
@@ -319,108 +416,157 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      {/* Mock Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 bg-[#1a120e] p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden border border-white/5">
-          {/* Subtle architectural background detail */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#9f4d2c]/5 blur-[100px] -mr-32 -mt-32" />
+        {/* Main Column */}
+        <div className="lg:col-span-8 space-y-8">
+          <div className="bg-[#1a120e] p-6 md:p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden border border-white/5">
+            {/* Subtle architectural background detail */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#9f4d2c]/5 blur-[100px] -mr-32 -mt-32" />
 
-          <div className="flex justify-between items-center mb-10 relative z-10">
-            <div className="space-y-1">
-              <h3 className="text-xl font-bold text-white">
-                Revenue Trajectory
-              </h3>
-              <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                Aggregated performance • Real-time Surveillance
-              </p>
-            </div>
-            <select className="bg-white/5 border border-white/10 text-xs font-bold text-white rounded-lg px-4 py-2 focus:ring-1 focus:ring-[#9f4d2c]/40 outline-none appearance-none cursor-pointer hover:bg-white/10 transition-colors">
-              <option className="bg-[#1a120e]">Last 7 Days</option>
-              <option className="bg-[#1a120e]">Last 30 Days</option>
-            </select>
-          </div>
-
-          <div className="relative h-64 z-10">
-            {/* Background Grid - Enhanced Visibility */}
-            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="w-full h-px bg-white/10" />
-              ))}
-            </div>
-
-            {dailyRevenue.every((d) => d.amount === 0) && !loading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-20">
-                <div className="p-3 bg-white/5 rounded-full">
-                  <TrendingUp className="w-6 h-6 text-white/20" />
-                </div>
-                <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">
-                  No recent revenue recorded
+            <div className="flex justify-between items-center mb-10 relative z-10 gap-4">
+              <div className="space-y-1">
+                <h3 className="text-xl font-bold text-white">
+                  Revenue Trajectory
+                </h3>
+                <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                  Aggregated performance • Real-time Surveillance
                 </p>
               </div>
-            )}
+              <select className="bg-white/5 border border-white/10 text-xs font-bold text-white rounded-lg px-4 py-2 focus:ring-1 focus:ring-[#9f4d2c]/40 outline-none appearance-none cursor-pointer hover:bg-white/10 transition-colors">
+                <option className="bg-[#1a120e]">Last 7 Days</option>
+                <option className="bg-[#1a120e]">Last 30 Days</option>
+              </select>
+            </div>
 
-            <div className="relative h-full flex items-end justify-between gap-4">
-              {dailyRevenue.map((data, i) => (
-                <div
-                  key={i}
-                  className="flex-1 flex flex-col items-center group h-full"
-                >
-                  <div className="flex-1 w-full relative group/bar cursor-pointer flex items-end justify-center">
-                    {/* Tooltip */}
-                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-[#1a120e] text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all duration-300 pointer-events-none z-20 whitespace-nowrap shadow-xl translate-y-2 group-hover/bar:translate-y-0">
-                      ${data.amount.toLocaleString()}
+            <div className="relative h-56 z-10 w-full overflow-hidden">
+              {/* Background Grid */}
+              <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="w-full h-px bg-white/10" />
+                ))}
+              </div>
+
+              <div className="relative h-full flex items-end justify-between gap-2 md:gap-4 overflow-x-auto pb-2 no-scrollbar">
+                {dailyRevenue.map((data, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 min-w-[30px] flex flex-col items-center group h-full"
+                  >
+                    <div className="flex-1 w-full relative group/bar cursor-pointer flex items-end justify-center">
+                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-[#1a120e] text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all duration-300 pointer-events-none z-20 whitespace-nowrap shadow-xl">
+                        ${data.amount.toLocaleString()}
+                      </div>
+                      <div
+                        className="w-full bg-white/5 rounded-t-xl group-hover/bar:bg-white/10 transition-all duration-500 relative"
+                        style={{
+                          height: `${Math.max(data.height, data.amount > 0 ? 5 : 0)}%`,
+                        }}
+                      >
+                        {data.amount > 0 && (
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#9f4d2c] to-[#9f4d2c]/40 opacity-90 rounded-t-xl" />
+                        )}
+                      </div>
                     </div>
+                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-4">
+                      {data.day}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
 
-                    <div
-                      className="w-full bg-white/5 rounded-t-xl group-hover/bar:bg-white/10 transition-all duration-500 relative"
-                      style={{
-                        height: `${Math.max(data.height, data.amount > 0 ? 5 : 0)}%`,
-                      }}
-                    >
-                      {data.amount > 0 && (
-                        <>
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#9f4d2c] via-[#9f4d2c]/80 to-[#9f4d2c]/40 opacity-90 group-hover/bar:opacity-100 transition-opacity duration-500 rounded-t-xl shadow-[0_0_30px_rgba(159,77,44,0.2)]" />
-                          <div className="absolute top-0 left-0 right-0 h-1 bg-[#9f4d2c] blur-sm opacity-50" />
-                        </>
-                      )}
+          {/* Recent Operations Feed */}
+          <div className="bg-white p-6 md:p-10 rounded-[2.5rem] border border-[#9f4d2c]/5 shadow-sm overflow-hidden">
+            <div className="flex justify-between items-center mb-8">
+              <div className="space-y-1">
+                <h3 className="text-xl font-bold text-[#1a120e]">
+                  Recent Tactical Operations
+                </h3>
+                <p className="text-[10px] font-bold text-[#4a403a]/40 uppercase tracking-widest leading-none">
+                  Live order intelligence feed
+                </p>
+              </div>
+              <ShoppingCart className="w-5 h-5 text-[#9f4d2c]/20" />
+            </div>
+
+            <div className="space-y-4">
+              {recentOrders.map((order) => (
+                <div
+                  key={order.id}
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-2xl bg-[#fcf9f5]/50 border border-[#9f4d2c]/5 hover:bg-[#fcf9f5] transition-colors gap-4"
+                >
+                  <div className="flex items-center gap-4 w-full sm:w-auto">
+                    <div className="p-2.5 bg-white border border-[#9f4d2c]/10 rounded-xl text-[10px] font-bold text-[#9f4d2c] flex-shrink-0">
+                      #{order.id.slice(-6).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-sm font-bold text-[#1a120e] truncate">
+                        {order.customer_name}
+                      </h4>
+                      <p className="text-[10px] font-medium text-[#4a403a]/40 truncate">
+                        {order.items.length} units •{" "}
+                        {new Date(order.created_at).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest group-hover:text-white transition-colors mt-4">
-                    {data.day}
-                  </span>
+                  <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-6 w-full sm:w-auto mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#9f4d2c]/5">
+                    <div
+                      className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${getStatusStyle(order.status)}`}
+                    >
+                      {order.status}
+                    </div>
+                    <span className="text-sm font-bold text-[#1a120e] tabular-nums">
+                      ${order.total_amount.toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="lg:col-span-4 bg-[#1a120e] p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 blur-3xl rounded-full -mr-20 -mt-20" />
-          <h3 className="text-xl font-bold text-white mb-8 relative z-10">
-            Acquisition Source
-          </h3>
-          <div className="space-y-6 relative z-10">
-            {[
-              { label: "Direct Organic", value: "64%", color: "bg-[#9f4d2c]" },
-              { label: "Referral Link", value: "23%", color: "bg-white" },
-              { label: "Social Media", value: "13%", color: "bg-pink-400/20" },
-            ].map((item, i) => (
-              <div key={i} className="space-y-2">
-                <div className="flex justify-between text-xs font-bold">
-                  <span className="text-white/60">{item.label}</span>
-                  <span className="text-white">{item.value}</span>
+        {/* Right Sidebar */}
+        <div className="lg:col-span-4 space-y-8">
+          <div className="bg-[#1a120e] p-6 md:p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 blur-3xl rounded-full -mr-20 -mt-20" />
+            <h3 className="text-xl font-bold text-white mb-8 relative z-10">
+              Intelligence Briefing
+            </h3>
+
+            <div className="space-y-6 relative z-10">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                    Notes for {formatDateKey(selectedDate)}
+                  </span>
+                  <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                 </div>
-                <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full ${item.color} rounded-full`}
-                    style={{ width: item.value }}
-                  />
-                </div>
+                <textarea
+                  value={currentNote}
+                  onChange={(e) => setCurrentNote(e.target.value)}
+                  placeholder="Draft tactical notes for this date..."
+                  className="w-full h-32 bg-white/5 border border-white/10 rounded-xl p-4 text-xs font-medium text-white/80 placeholder:text-white/20 focus:ring-1 focus:ring-[#9f4d2c]/40 outline-none resize-none transition-all"
+                />
+                <button
+                  onClick={saveNote}
+                  className="w-full py-3 bg-[#9f4d2c] text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl hover:bg-[#9f4d2c]/90 transition-all active:scale-95 shadow-lg shadow-[#9f4d2c]/10"
+                >
+                  Archive Intelligence
+                </button>
               </div>
-            ))}
-          </div>
-          <div className="mt-8">
-            <ExecutiveCalendar />
+
+              <div className="pt-6 border-t border-white/10">
+                <ExecutiveCalendar
+                  selectedDate={selectedDate}
+                  onDateSelect={handleDateSelect}
+                  notes={notes}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
