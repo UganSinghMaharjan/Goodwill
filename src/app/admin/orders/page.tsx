@@ -11,7 +11,11 @@ import {
   AlertCircle,
   Package,
   ArrowUpRight,
+  RefreshCw,
+  X,
 } from "lucide-react";
+import { apiFetch } from "@/app/lib/api";
+import toast from "react-hot-toast";
 
 interface OrderItem {
   product_id: number;
@@ -33,6 +37,7 @@ interface Order {
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -40,15 +45,34 @@ export default function AdminOrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8001/orders");
-      if (res.ok) {
-        const data = await res.json();
-        setOrders(data);
-      }
+      const data = await apiFetch<Order[]>("/orders");
+      setOrders(data);
     } catch (error) {
       console.error("Failed to fetch orders", error);
+      toast.error("Failed to sync order records");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateOrderStatus = async (orderId: string, newStatus: string) => {
+    setUpdatingId(orderId);
+    try {
+      await apiFetch(`/orders/${orderId}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      // Update local state
+      setOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)),
+      );
+      toast.success(`Order status updated to ${newStatus}`);
+    } catch (error) {
+      console.error("Failed to update status", error);
+      toast.error("Failed to update acquisition lifecycle");
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -62,6 +86,8 @@ export default function AdminOrdersPage() {
         return "bg-indigo-50 text-indigo-600 border-indigo-100";
       case "delivered":
         return "bg-green-50 text-green-600 border-green-100";
+      case "cancelled":
+        return "bg-red-50 text-red-600 border-red-100 text-black";
       default:
         return "bg-gray-50 text-gray-500 border-gray-100";
     }
@@ -71,8 +97,14 @@ export default function AdminOrdersPage() {
     switch (status.toLowerCase()) {
       case "pending":
         return <Clock className="w-3.5 h-3.5" />;
+      case "processing":
+        return <RefreshCw className="w-3.5 h-3.5" />;
+      case "shipped":
+        return <Package className="w-3.5 h-3.5" />;
       case "delivered":
         return <CheckCircle className="w-3.5 h-3.5" />;
+      case "cancelled":
+        return <X className="w-3.5 h-3.5 text-black" />;
       default:
         return <AlertCircle className="w-3.5 h-3.5" />;
     }
@@ -196,11 +228,45 @@ export default function AdminOrdersPage() {
                         </div>
                       </td>
                       <td className="px-6 py-8">
-                        <div
-                          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-[0.1em] shadow-sm ${getStatusStyle(order.status)}`}
-                        >
-                          {getStatusIcon(order.status)}
-                          {order.status}
+                        <div className="relative inline-block group/status">
+                          <select
+                            value={order.status}
+                            disabled={updatingId === order.id}
+                            onChange={(e) =>
+                              updateOrderStatus(order.id, e.target.value)
+                            }
+                            className={`appearance-none pl-10 pr-10 py-2.5 rounded-full border text-[10px] font-black uppercase tracking-[0.1em] shadow-sm cursor-pointer outline-none focus:ring-2 focus:ring-primary/20 transition-all ${updatingId === order.id ? "opacity-50 grayscale" : getStatusStyle(order.status)}`}
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </select>
+                          <div
+                            className={`absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${updatingId === order.id ? "animate-spin" : ""}`}
+                          >
+                            {updatingId === order.id ? (
+                              <RefreshCw className="w-3.5 h-3.5 text-primary" />
+                            ) : (
+                              getStatusIcon(order.status)
+                            )}
+                          </div>
+                          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
+                            <svg
+                              className="w-3 h-3"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={3}
+                                d="M19 9l-7 7-7-7"
+                              />
+                            </svg>
+                          </div>
                         </div>
                       </td>
                       <td className="px-10 py-8 text-right">
