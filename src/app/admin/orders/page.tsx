@@ -13,6 +13,7 @@ import {
   ArrowUpRight,
   RefreshCw,
   X,
+  ChevronDown,
 } from "lucide-react";
 import { apiFetch } from "@/app/lib/api";
 import toast from "react-hot-toast";
@@ -38,6 +39,18 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".status-dropdown")) {
+        setOpenDropdownId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     fetchOrders();
@@ -79,34 +92,41 @@ export default function AdminOrdersPage() {
   const getStatusStyle = (status: string) => {
     switch (status.toLowerCase()) {
       case "pending":
-        return "bg-amber-50 text-amber-600 border-amber-100";
+        return "bg-[#fcf5ed] text-[#9f4d2c] border-[#9f4d2c]/20";
       case "processing":
-        return "bg-blue-50 text-blue-600 border-blue-100";
+        return "bg-[#3b2b24] text-[#fcf9f5] border-white/5";
       case "shipped":
-        return "bg-indigo-50 text-indigo-600 border-indigo-100";
+        return "bg-[#6b5c54] text-[#fcf9f5] border-white/5";
       case "delivered":
-        return "bg-green-50 text-green-600 border-green-100";
+        return "bg-[#4a7862] text-[#fcf9f5] border-white/5";
       case "cancelled":
-        return "bg-red-50 text-red-600 border-red-100 text-black";
+        return "bg-[#8b3a3a] text-[#fcf9f5] border-white/5";
       default:
-        return "bg-gray-50 text-gray-500 border-gray-100";
+        return "bg-[#fcf9f5] text-[#4a403a] border-[#4a403a]/10";
     }
   };
 
   const getStatusIcon = (status: string) => {
+    const isDarkBg = [
+      "processing",
+      "shipped",
+      "delivered",
+      "cancelled",
+    ].includes(status.toLowerCase());
+    const iconClass = isDarkBg ? "text-white" : "text-[#9f4d2c]";
     switch (status.toLowerCase()) {
       case "pending":
-        return <Clock className="w-3.5 h-3.5" />;
+        return <Clock className={`w-3.5 h-3.5 ${iconClass}`} />;
       case "processing":
-        return <RefreshCw className="w-3.5 h-3.5" />;
+        return <RefreshCw className={`w-3.5 h-3.5 ${iconClass}`} />;
       case "shipped":
-        return <Package className="w-3.5 h-3.5" />;
+        return <Package className={`w-3.5 h-3.5 ${iconClass}`} />;
       case "delivered":
-        return <CheckCircle className="w-3.5 h-3.5" />;
+        return <CheckCircle className={`w-3.5 h-3.5 ${iconClass}`} />;
       case "cancelled":
-        return <X className="w-3.5 h-3.5 text-black" />;
+        return <X className={`w-3.5 h-3.5 ${iconClass}`} />;
       default:
-        return <AlertCircle className="w-3.5 h-3.5" />;
+        return <AlertCircle className={`w-3.5 h-3.5 ${iconClass}`} />;
     }
   };
 
@@ -228,45 +248,59 @@ export default function AdminOrdersPage() {
                         </div>
                       </td>
                       <td className="px-6 py-8">
-                        <div className="relative inline-block group/status">
-                          <select
-                            value={order.status}
+                        <div className="relative status-dropdown">
+                          <button
                             disabled={updatingId === order.id}
-                            onChange={(e) =>
-                              updateOrderStatus(order.id, e.target.value)
+                            onClick={() =>
+                              setOpenDropdownId(
+                                openDropdownId === order.id ? null : order.id,
+                              )
                             }
-                            className={`appearance-none pl-10 pr-10 py-2.5 rounded-full border text-[10px] font-black uppercase tracking-[0.1em] shadow-sm cursor-pointer outline-none focus:ring-2 focus:ring-primary/20 transition-all ${updatingId === order.id ? "opacity-50 grayscale" : getStatusStyle(order.status)}`}
+                            className={`flex items-center gap-2 pl-10 pr-4 py-2.5 rounded-full border text-[10px] font-black uppercase tracking-[0.1em] shadow-sm transition-all focus:ring-2 focus:ring-primary/20 ${updatingId === order.id ? "opacity-50 grayscale" : getStatusStyle(order.status)}`}
                           >
-                            <option value="Pending">Pending</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Shipped">Shipped</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Cancelled">Cancelled</option>
-                          </select>
-                          <div
-                            className={`absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${updatingId === order.id ? "animate-spin" : ""}`}
-                          >
-                            {updatingId === order.id ? (
-                              <RefreshCw className="w-3.5 h-3.5 text-primary" />
-                            ) : (
-                              getStatusIcon(order.status)
-                            )}
-                          </div>
-                          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
-                            <svg
-                              className="w-3 h-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                            <span className="flex-1 truncate">
+                              {order.status}
+                            </span>
+                            <ChevronDown
+                              className={`w-3 h-3 opacity-40 transition-transform duration-300 ${openDropdownId === order.id ? "rotate-180" : ""}`}
+                            />
+
+                            <div
+                              className={`absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${updatingId === order.id ? "animate-spin" : ""}`}
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={3}
-                                d="M19 9l-7 7-7-7"
-                              />
-                            </svg>
-                          </div>
+                              {updatingId === order.id ? (
+                                <RefreshCw className="w-3.5 h-3.5 text-primary" />
+                              ) : (
+                                getStatusIcon(order.status)
+                              )}
+                            </div>
+                          </button>
+
+                          {openDropdownId === order.id && (
+                            <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-[#9f4d2c]/10 rounded-2xl shadow-2xl py-2 z-[100] animate-in fade-in slide-in-from-top-2 duration-200">
+                              {[
+                                "Pending",
+                                "Processing",
+                                "Shipped",
+                                "Delivered",
+                                "Cancelled",
+                              ].map((status) => (
+                                <button
+                                  key={status}
+                                  onClick={() => {
+                                    updateOrderStatus(order.id, status);
+                                    setOpenDropdownId(null);
+                                  }}
+                                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors hover:bg-[#fcf9f5] ${order.status === status ? "text-primary" : "text-[#4a403a]/60"}`}
+                                >
+                                  <div
+                                    className={`w-2 h-2 rounded-full ${status.toLowerCase() === "pending" ? "bg-[#d17b5a]" : status.toLowerCase() === "processing" ? "bg-[#4a3a33]" : status.toLowerCase() === "shipped" ? "bg-[#8a7b75]" : status.toLowerCase() === "delivered" ? "bg-[#5a9e7f]" : "bg-[#c25454]"}`}
+                                  />
+                                  {status}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </td>
                       <td className="px-10 py-8 text-right">
