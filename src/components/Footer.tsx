@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="mb-8 md:mb-0 text-center md:text-left">
             <Link href="/" className="relative w-48 h-14 block mb-6">
               <Image
-                src="/images/TGFWHITE.png"
+                src="/images/logo.png"
                 alt="Goodwill Logo"
                 fill
                 className="object-contain"

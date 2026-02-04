@@ -52,7 +52,7 @@ export default function ProfileOverview() {
   return (
     <div className="space-y-12 animate-in fade-in duration-500">
       <div>
-        <h1 className="text-4xl font-light text-foreground tracking-tight">
+        <h1 className="text-4xl font-bold text-foreground tracking-tight">
           Overview
         </h1>
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -65,7 +65,7 @@ export default function ProfileOverview() {
             </p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-foreground/70 font-bold mb-2">
+            <p className="text-xs uppercase tracking-[0.2em] text-foreground font-bold mb-2">
               Orders
             </p>
             <p className="text-3xl font-light text-foreground">
@@ -75,7 +75,7 @@ export default function ProfileOverview() {
         </div>
       </div>
 
-      <div className="border-t border-foreground/5 pt-12">
+      <div className="border-t border-foreground/50 pt-12">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-xl font-medium text-foreground">
             Purchased Items
@@ -93,7 +93,7 @@ export default function ProfileOverview() {
             {allItems.map((item, idx) => (
               <div
                 key={idx}
-                className="group flex items-start gap-4 p-4 rounded-xl hover:bg-white transition-colors border border-transparent hover:border-foreground/5"
+                className="group flex items-start gap-4 p-4 rounded-xl hover:bg-white transition-colors border border-transparent hover:border-foreground/25"
               >
                 <div className="w-16 h-16 bg-accent rounded-lg flex items-center justify-center text-primary font-bold text-lg flex-shrink-0">
                   {item.product_name.charAt(0)}

@@ -156,7 +156,7 @@ export default function UserOrdersPage() {
                   {orders.map((order) => (
                     <tr
                       key={order.id}
-                      className="group hover:bg-foreground/[0.02] transition-colors"
+                      className="group hover:bg-foreground/[0.07] transition-colors"
                     >
                       <td className="px-6 py-6">
                         <span className="font-mono text-xs text-foreground font-medium">

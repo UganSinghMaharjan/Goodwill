@@ -79,7 +79,7 @@ export default function Navbar() {
       <div className="container mx-auto px-6 flex justify-between items-center">
         <Link href="/" className="relative w-40 h-12 md:w-56 md:h-16 -ml-2">
           <Image
-            src={scrolled ? "/images/TGFBLACK.png" : "/images/TGFBLACK.png"}
+            src={scrolled ? "/images/logo.png" : "/images/logo.png"}
             alt="Goodwill Logo"
             fill
             className="object-contain"
@@ -358,7 +358,7 @@ export default function Navbar() {
             className="relative w-32 h-10"
           >
             <Image
-              src="/images/TGFBLACK.png"
+              src="/images/logo.png"
               alt="Goodwill Logo"
               fill
               className="object-contain"

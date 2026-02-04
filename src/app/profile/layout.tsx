@@ -59,7 +59,7 @@ export default function ProfileLayout({
                 })}
               </div>
 
-              <div className="mt-12 pt-8 border-t border-foreground/5 px-4 space-y-3">
+              <div className="mt-12 pt-8 border-t border-foreground/15 px-4 space-y-3">
                 <Link
                   href="/"
                   className="text-sm font-medium text-secondary hover:text-foreground transition-colors flex items-center gap-2"
