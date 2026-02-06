@@ -144,12 +144,12 @@ export default function Navbar() {
           >
             About Us
           </Link>
-          {/* <Link
-            href="/"
-            className="text-foreground hover:text-primary transition-colors font-medium"
+          <Link
+            href="/contact"
+            className="text-sm font-medium text-foreground hover:text-primary transition-colors"
           >
             Contact
-          </Link> */}
+          </Link>
         </div>
         <div className="flex items-center space-x-2 md:space-x-4">
           {/* Cart Dropdown */}
@@ -418,7 +418,7 @@ export default function Navbar() {
               Showroom
             </Link>
             <Link
-              href="/"
+              href="/contact"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-xl font-bold text-foreground hover:text-primary transition-colors"
             >

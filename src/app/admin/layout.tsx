@@ -13,6 +13,7 @@ import {
   Bell,
   Menu,
   X,
+  MessageSquare,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -106,6 +107,7 @@ export default function AdminLayout({
     { href: "/admin", label: "Analytics", icon: BarChart3 },
     { href: "/admin/products", label: "Inventory Control", icon: Package },
     { href: "/admin/orders", label: "Order Insights", icon: ShoppingCart },
+    { href: "/admin/queries", label: "Client Queries", icon: MessageSquare },
   ];
 
   return (

@@ -68,7 +68,7 @@ export default function SignUpPage() {
               </label>
               <input
                 type="text"
-                className="w-full px-5 py-3 rounded-xl border border-primary/20 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-5 py-3 rounded-xl border border-primary/20 text-foreground/70 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
                 placeholder="Ex: Leonard Goodwill"
                 value={formData.name}
                 onChange={(e) =>
@@ -83,7 +83,7 @@ export default function SignUpPage() {
               </label>
               <input
                 type="email"
-                className="w-full px-5 py-3 rounded-xl border border-primary/20 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-5 py-3 rounded-xl border border-primary/20 text-foreground/70 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
                 placeholder="your@email.com"
                 value={formData.email}
                 onChange={(e) =>
@@ -98,7 +98,7 @@ export default function SignUpPage() {
               </label>
               <input
                 type="password"
-                className="w-full px-5 py-3 rounded-xl border border-primary/20 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-5 py-3 rounded-xl border border-primary/20 text-foreground/70 bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) =>

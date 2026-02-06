@@ -11,15 +11,29 @@ export async function apiFetch<T>(
     const url = `${BASE_URL}${endpoint}`;
     console.log(`[API] Fetching: ${url}`);
 
+    // Get token from localStorage
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
     const response = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(options.headers || {}),
       },
       ...options,
       signal: controller.signal,
     });
     clearTimeout(timeoutId);
+
+    if (response.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        window.location.href = "/auth/login";
+      }
+      throw new Error("Session expired. Please log in again.");
+    }
 
     if (!response.ok) {
       const text = await response.text();

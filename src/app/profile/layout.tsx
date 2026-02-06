@@ -1,7 +1,14 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, Settings, LogOut, User } from "lucide-react";
+import {
+  LayoutDashboard,
+  Package,
+  Settings,
+  LogOut,
+  User,
+  MessageSquare,
+} from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -16,6 +23,11 @@ export default function ProfileLayout({
   const navigation = [
     { name: "Overview", href: "/profile", icon: LayoutDashboard },
     { name: "My Orders", href: "/profile/orders", icon: Package },
+    {
+      name: "Communication Hub",
+      href: "/profile/queries",
+      icon: MessageSquare,
+    },
     { name: "Settings", href: "/profile/settings", icon: Settings },
   ];
 
